@@ -37,6 +37,6 @@ all: $(EXE)
 $(EXE): $(OBJS) $(HDRS) $(FBCLIBS) $(LIBS)
 	$(FBC) $(FBCFLAGS) $(OBJS) -x $@
 
-.PHONY : clean
+.PHONY: clean
 clean:
 	-rm -f $(OBJS)

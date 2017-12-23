@@ -38,6 +38,6 @@ $(LIBNAME): $(LIBRARY)
 $(LIBRARY): $(OBJS) $(LIBS)
 	$(FBC) -lib $(FBCFLAGS) $(OBJS) $(LIBS) -x $(LIBRARY)
 
-.PHONY : clean
-clean:
+.PHONY : clean_library
+clean_library:
 	-rm -f $(OBJS) $(LIBRARY)

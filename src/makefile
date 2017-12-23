@@ -12,3 +12,6 @@ DEP_LIBS :=
 BASEDIR := ..
 
 include ../library.inc
+
+.PHONY: clean
+clean: clean_library
