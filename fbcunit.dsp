@@ -76,6 +76,30 @@ CFG=fbcunit - Win32 Debug
 
 !ENDIF 
 
+# Begin Group "build"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\changelog.txt
+# End Source File
+# Begin Source File
+
+SOURCE=.\library.inc
+# End Source File
+# Begin Source File
+
+SOURCE=.\makefile
+# End Source File
+# Begin Source File
+
+SOURCE=.\mk.bat
+# End Source File
+# Begin Source File
+
+SOURCE=.\readme.txt
+# End Source File
+# End Group
 # Begin Group "src"
 
 # PROP Default_Filter ""
@@ -120,25 +144,5 @@ SOURCE=.\tests\mk.bat
 SOURCE=.\tests\tests.bas
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\changelog.txt
-# End Source File
-# Begin Source File
-
-SOURCE=.\library.inc
-# End Source File
-# Begin Source File
-
-SOURCE=.\makefile
-# End Source File
-# Begin Source File
-
-SOURCE=.\mk.bat
-# End Source File
-# Begin Source File
-
-SOURCE=.\readme.txt
-# End Source File
 # End Target
 # End Project

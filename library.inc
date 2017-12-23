@@ -1,11 +1,27 @@
 ##########################
 
-LIBDIR := $(BASEDIR)/lib/win32
+ifndef TARGET
+$(error TARGET variable not set.  must be set to one of win32, win64)
+endif
+
+ifeq ($(TARGET), win32)
+	EXEEXT := .exe
+else
+	ifeq ($(TARGET), win64)
+		EXEEXT := .exe
+	else
+		$(error TARGET variable must be set to one of win32, win64)
+	endif
+endif
+
+##########################
+
+LIBDIR := $(BASEDIR)/lib/$(TARGET)
 INCDIR := $(BASEDIR)/inc
 
 LIBRARY := $(LIBDIR)/lib$(LIBNAME).a
 LIBS := $(patsubst %,$(LIBDIR)/lib%.a,$(DEP_LIBS))
-OBJDIR := $(BASEDIR)/obj
+OBJDIR := $(BASEDIR)/obj/$(TARGET)
 
 OBJS := $(patsubst %.bas,$(OBJDIR)/%.o,$(SRCS))
 
