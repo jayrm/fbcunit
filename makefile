@@ -1,15 +1,10 @@
 ##########################
 
-MAKEFILES := src/makefile
-MAKEFILES += tests/makefile
-
-##########################
-
 ifndef TARGET
 $(error TARGET variable not set.  must be set to one of win32, win64)
 endif
 
-MAKE := make.exe
+MAKE := make
 
 .SUFFIXES:
 
@@ -17,6 +12,7 @@ VPATH = .
 
 ##########################
 
+.PHONY: all
 all: fbcunit tests
 
 .PHONY: fbcunit

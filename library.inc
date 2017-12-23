@@ -47,6 +47,7 @@ $(OBJDIR)/%.o : %.bas $(HDRS) $(LIBS)
 
 ##########################
 
+.PHONY: all
 all: $(LIBNAME)
 
 $(LIBNAME): $(LIBRARY)

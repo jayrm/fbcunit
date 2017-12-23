@@ -49,6 +49,7 @@ VPATH = .
 
 ##########################
 
+.PHONY: all
 all: $(EXE)
 
 $(EXE): $(OBJS) $(HDRS) $(FBCLIBS) $(LIBS)
