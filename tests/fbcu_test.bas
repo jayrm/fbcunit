@@ -1,9 +1,9 @@
 #include once "fbcunit.bi"
 
-namespace tests.fbcunit
+SUITE( fbcunit )
 
-	sub sanity_check cdecl ()
-
+	TEST( sanity_check )
+	
 		'' check some basic functions of the FBCU component
 
 		CU_ASSERT( true )
@@ -21,11 +21,6 @@ namespace tests.fbcunit
 		CU_ASSERT_TRUE( true )
 		CU_ASSERT_FALSE( false )
 
-	end sub
+	END_TEST()
 
-	sub ctor () constructor
-		fbcu.add_suite( "tests.fbcunit" )
-		fbcu.add_test( "sanity_check", @sanity_check )
-	end sub
-
-end namespace
+END_SUITE()
