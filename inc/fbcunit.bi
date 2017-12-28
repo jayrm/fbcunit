@@ -28,11 +28,11 @@
 	#if FBCU_ENABLE_TRACE<>0
 	#print start of suite suite_name
 	#endif
-	namespace tests. ## suite_name
+	namespace tests.##suite_name
 #endmacro
 
 #macro END_SUITE_EMIT( suite_name )
-	sub suite_ctor () constructor
+	sub suite_name##ctor () constructor
 		fbcu.add_suite( #suite_name )
 	end sub
 	end namespace
@@ -61,12 +61,12 @@
 	#if FBCU_ENABLE_TRACE<>0
 	#print start of test test_name
 	#endif
-	sub sanity_check cdecl ()
+	sub test_name cdecl ()
 #endmacro
 
 #macro END_TEST_EMIT( test_name )
 	end sub
-	sub ctor () constructor
+	sub test_name##ctor () constructor
 		fbcu.add_test( #test_name, @test_name )
 	end sub
 	#if FBCU_ENABLE_TRACE<>0
