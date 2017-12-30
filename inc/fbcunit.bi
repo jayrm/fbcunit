@@ -7,6 +7,9 @@
 #define NULL 0
 #endif
 
+#define FBCU_VER_MAJOR 0
+#define FBCU_VER_MINOR 1
+
 #define CU_ASSERT( a )               fbcu.CU_ASSERT_( (a), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT(" #a ")" )
 #define CU_ASSERT_EQUAL( a, b )      fbcu.CU_ASSERT_( ((a)=(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_EQUAL(" #a "," #b ")" )
 #define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
@@ -22,7 +25,7 @@
 
 #macro SUITE( suite_name )
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
-	#error FBCUNIT: test suites can not be nested or missing END_SUITE() 
+	#error FBCUNIT: test suites can not be nested or missing END_SUITE
 	#endif
 	#define TMP_FBCUNIT_SUITE_NAME suite_name
 	#if FBCU_ENABLE_TRACE<>0
@@ -41,9 +44,9 @@
 	#endif
 #endmacro
 
-#macro END_SUITE()
+#macro END_SUITE_()
 	#if defined( TMP_FBCUNIT_TEST_NAME )
-	#error FBCUNIT: missing END_TEST() before END_SUITE()
+	#error FBCUNIT: missing END_TEST() before END_SUITE
 	#endif
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
 	END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME )
@@ -53,9 +56,11 @@
 	#endif
 #endmacro
 
+#define END_SUITE END_SUITE_()
+
 #macro TEST( test_name )
 	#if defined( TMP_FBCUNIT_TEST_NAME )
-	#error FBCUNIT: tests can not be nested or missing END_TEST()
+	#error FBCUNIT: tests can not be nested or missing END_TEST
 	#endif
 	#define TMP_FBCUNIT_TEST_NAME test_name
 	#if FBCU_ENABLE_TRACE<>0
@@ -74,14 +79,16 @@
 	#endif
 #endmacro
 
-#macro END_TEST()
+#macro END_TEST_()
 	#if defined( TMP_FBCUNIT_TEST_NAME )
 	END_TEST_EMIT( TMP_FBCUNIT_TEST_NAME )
 	#undef TMP_FBCUNIT_TEST_NAME
 	#else
-	#error FBCUNIT: mismatched END_TEST()
+	#error FBCUNIT: mismatched END_TEST
 	#endif
 #endmacro
+
+#define END_TEST END_TEST_()
 
 namespace fbcu
 

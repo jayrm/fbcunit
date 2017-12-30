@@ -1,3 +1,5 @@
+#define FBCU_ENABLE_TRACE 1
+
 #include once "fbcunit.bi"
 
 SUITE( fbcunit )
@@ -21,7 +23,7 @@ SUITE( fbcunit )
 		CU_ASSERT_TRUE( true )
 		CU_ASSERT_FALSE( false )
 
-	END_TEST()
+	END_TEST
 
 	TEST( other_check )
 	
@@ -42,6 +44,16 @@ SUITE( fbcunit )
 		CU_ASSERT_TRUE( true )
 		CU_ASSERT_FALSE( false )
 
-	END_TEST()
+	END_TEST
 
-END_SUITE()
+END_SUITE
+
+SUITE( fbc_compiler )
+
+	TEST( version )
+		
+		CU_ASSERT( __FB_VER_MAJOR__ >= 1 )
+
+	END_TEST
+
+END_SUITE
