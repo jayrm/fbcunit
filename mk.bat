@@ -1,7 +1,7 @@
-call c:\batch\setpath.bat FBWIN
-
-make DEBUG=1 TARGET=win32
+@echo off
+echo Building fbcunit library
+make
 if ERRORLEVEL 1 goto DONE
-
+echo Building fbcunit tests
+make tests
 :DONE
-

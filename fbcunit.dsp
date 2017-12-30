@@ -57,9 +57,9 @@ CFG=fbcunit - Win32 Debug
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
-# PROP Cmd_Line "e:\fb\fbcunit\mk.bat"
+# PROP Cmd_Line "mk-jayrm.bat"
 # PROP Rebuild_Opt ""
-# PROP Target_File "e:\fb\fbcunit\lib\win32\libfbcunit.a"
+# PROP Target_File "lib/libfbcunit.a"
 # PROP Bsc_Name ""
 # PROP Target_Dir ""
 
@@ -85,10 +85,6 @@ SOURCE=.\changelog.txt
 # End Source File
 # Begin Source File
 
-SOURCE=.\library.inc
-# End Source File
-# Begin Source File
-
 SOURCE=.\makefile
 # End Source File
 # Begin Source File
@@ -107,14 +103,6 @@ SOURCE=.\readme.txt
 
 SOURCE=.\src\fbcunit.bas
 # End Source File
-# Begin Source File
-
-SOURCE=.\src\makefile
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\mk.bat
-# End Source File
 # End Group
 # Begin Group "inc"
 
@@ -130,14 +118,6 @@ SOURCE=.\inc\fbcunit.bi
 # Begin Source File
 
 SOURCE=.\tests\fbcu_test.bas
-# End Source File
-# Begin Source File
-
-SOURCE=.\tests\makefile
-# End Source File
-# Begin Source File
-
-SOURCE=.\tests\mk.bat
 # End Source File
 # Begin Source File
 

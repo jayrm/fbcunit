@@ -1,29 +1,36 @@
-##########################
+FBC := fbc
 
-ifndef TARGET
-$(error TARGET variable not set.  must be set to one of win32, win64)
-endif
+LIBRARY := lib/libfbcunit.a
+SRCS    := src/fbcunit.bas
+HDRS    := inc/fbcunit.bi
 
-MAKE := make
+TEST_SRCS := tests/tests.bas
+TEST_SRCS += tests/fbcu_test.bas
+TEST_OBJS := $(patsubst %.bas,%.o,$(TEST_SRCS))
+TEST_EXE  := tests/tests.exe
 
-.SUFFIXES:
+FBCFLAGS += -g -exx -i ./inc
+
+.SUFFIXES: .bas
 
 VPATH = .
 
-##########################
-
 .PHONY: all
-all: fbcunit tests
-
-.PHONY: fbcunit
-fbcunit: src/makefile
-	$(MAKE) -C $(<D) -f $(<F) all
+all: $(LIBRARY)
 
 .PHONY: tests
-tests: tests/makefile
-	$(MAKE) -C $(<D) -f $(<F) all
+tests: $(TEST_EXE)
+
+$(LIBRARY): $(SRCS) $(HDRS)
+	$(FBC) $(FBCFLAGS) -lib $(SRCS) -x $(LIBRARY)
+
+tests/%.o: tests/%.bas $(HDRS)
+	$(FBC) $(FBCFLAGS) -m tests -c $< -o $@
+
+$(TEST_EXE): $(TEST_OBJS) $(LIBRARY)
+	$(FBC) $(FBCFLAGS) $(TEST_OBJS) -p ./lib -x $(TEST_EXE)
 
 .PHONY: clean
 clean:
-	$(MAKE) -C tests -f makefile clean
-	$(MAKE) -C src -f makefile clean
+	-rm -f $(LIBRARY)
+	-rm -f $(TEST_OBJS) $(TEST_EXE)

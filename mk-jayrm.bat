@@ -1,6 +1,8 @@
 call c:\batch\setpath.bat FBWIN
 
-make DEBUG=1 TARGET=win32
+make
 if ERRORLEVEL 1 goto DONE
+
+make tests
 
 :DONE
