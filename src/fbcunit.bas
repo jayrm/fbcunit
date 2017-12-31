@@ -16,6 +16,8 @@ type FBCU_SUITE
 	assert_count as integer
 	pass_count as integer
 	fail_count as integer
+	test_index_head as integer
+	test_index_tail as integer
 end type
 
 type FBCU_TEST
@@ -26,6 +28,7 @@ type FBCU_TEST
 	assert_count as integer
 	pass_count as integer
 	fail_count as integer
+	test_index_next as integer
 end type
 
 redim shared fbcu_suites(1 to FBCU_SUITE_COUNT_START) as FBCU_SUITE
@@ -102,6 +105,8 @@ namespace fbcu
 			.assert_count = 0
 			.pass_count = 0
 			.fail_count = 0
+			.test_index_head = INVALID_INDEX
+			.test_index_tail = INVALID_INDEX
 
 		end with
 
@@ -161,8 +166,17 @@ namespace fbcu
 			.assert_count = 0
 			.pass_count = 0
 			.fail_count = 0
+			.test_index_next = INVALID_INDEX
+
 		end with
 
+		if( fbcu_suites( fbcu_suite_index ).test_index_head = INVALID_INDEX ) then
+			fbcu_suites( fbcu_suite_index ).test_index_head = fbcu_tests_count
+		else
+			fbcu_tests( fbcu_suites( fbcu_suite_index ).test_index_tail ).test_index_next = fbcu_tests_count
+		end if
+		fbcu_suites( fbcu_suite_index ).test_index_tail = fbcu_tests_count
+		
 		fbcu_test_index = fbcu_tests_count
 
 		if( is_global ) then
@@ -211,7 +225,9 @@ namespace fbcu
 					end if
 				end if
 
-				for fbcu_test_index as integer = 1 to fbcu_tests_count
+				fbcu_test_index = .test_index_head
+
+				while( fbcu_test_index <> INVALID_INDEX )
 
 					with fbcu_tests( fbcu_test_index )
 						if( .suite_index = fbcu_suite_index ) then
@@ -222,9 +238,12 @@ namespace fbcu
 								.test_proc()
 							end if
 						end if
+
+						fbcu_test_index = .test_index_next
+
 					end with
 
-				next
+				wend
 
 				if( .term_proc ) then
 					.term_proc()

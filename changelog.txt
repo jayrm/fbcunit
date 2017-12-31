@@ -2,6 +2,7 @@ Version 0.02
 
 [added]
 - dual api for using fbcunit in -lang qb
+- internal: use a singly linked lists to run tests for each test
 
 [changed]
 - fbcunit.bi reorganized to separate helper macros and code emitters
