@@ -2,6 +2,7 @@ FBC := fbc
 
 LIBRARY := lib/libfbcunit.a
 SRCS    := src/fbcunit.bas
+SRCS    += src/fbcunit_qb.bas
 HDRS    := inc/fbcunit.bi
 
 TEST_SRCS := tests/tests.bas
@@ -18,6 +19,7 @@ EXAMPLES += examples/ex02.exe
 EXAMPLES += examples/ex03.exe
 EXAMPLES += examples/ex04.exe
 EXAMPLES += examples/ex05.exe
+EXAMPLES += examples/ex06.exe
 
 FBCFLAGS += -g -exx -i ./inc
 

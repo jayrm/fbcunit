@@ -10,6 +10,9 @@ fbcunit TODO list:
 	source modules.  currently is a trivial sequential
 	scan and won't scale well.
 
+[X] qb doesn't support namespaces and many other 
+    keywords so need a wrapper api for the lang qb mode
+
 [X] fix the of adding tests to the default suite
 	see tests/fbcu_global.bas and then compare
 	to the output when running tests/tests.exe

@@ -48,7 +48,7 @@ namespace fbcu
 	function find_suite _
 		( _
 			byval suite_name as zstring ptr = FBCU_NULL _
-		) as integer
+		) as long
 
 		if( suite_name = FBCU_NULL ) then
 			return INVALID_INDEX
@@ -303,9 +303,9 @@ namespace fbcu
 	''
 	sub CU_ASSERT_ _
 		( _
-			byval value as integer, _
+			byval value as long, _
 			byval fil as zstring ptr, _
-			byval lin as integer, _
+			byval lin as long, _
 			byval fun as zstring ptr, _
 			byval msg as zstring ptr _
 		)
@@ -344,9 +344,9 @@ namespace fbcu
 	''
 	sub CU_ASSERT_FATAL_ _
 		( _
-			byval value as integer, _
+			byval value as long, _
 			byval fil as zstring ptr, _
-			byval lin as integer, _
+			byval lin as long, _
 			byval fun as zstring ptr, _
 			byval msg as zstring ptr _
 		)

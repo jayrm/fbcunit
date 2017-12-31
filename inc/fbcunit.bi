@@ -1,23 +1,28 @@
 #ifndef __FBCUNIT_BI_INCLUDE__
 #define __FBCUNIT_BI_INCLUDE__ 1
 
+/'----------------------------------------------
+| fbcunit - FreeBASIC unit testing module      |
+-----------------------------------------------/
+
+   )))                                   
+  ))   ))                           ))   ))
+  ))   ))                                ))
+)))))) )))))   ))))  ))  )) )))))  )))  ))))
+  ))   ))  )) ))  )) ))  )) )) )))  ))   ))
+  ))   ))  )) ))     ))  )) ))  ))  ))   ))
+  ))   ))  )) ))  )) ))  )) ))  ))  ))   ))
+  ))   )))))   ))))   ))))  ))  )) ))))   )))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------------------'/
+
+
 #inclib "fbcunit"
 
-#define FBCU_VER_MAJOR 0
-#define FBCU_VER_MINOR 1
-
-#ifndef FBCU_NULL
-#define FBCU_NULL 0
-#endif
-
-#define CU_ASSERT( a )               fbcu.CU_ASSERT_( (a), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT(" #a ")" )
-#define CU_ASSERT_EQUAL( a, b )      fbcu.CU_ASSERT_( ((a)=(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_EQUAL(" #a "," #b ")" )
-#define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
-#define CU_ASSERT_TRUE( a )          fbcu.CU_ASSERT_( (a)=true, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_TRUE(" #a ")" )
-#define CU_ASSERT_FALSE( a )         fbcu.CU_ASSERT_( (a)=false, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_FALSE(" #a ")" )
-#define CU_FAIL( msg )               fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
-#define CU_FAIL_FATAL( a )           fbcu.CU_ASSERT_FATAL_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL_FATAL(" #a ")" )
-#define CU_PASS( msg )               fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
+/'------------------------------------
+| compile time configuration options |
+------------------------------------'/
 
 #if not defined(FBCU_ENABLE_MACROS)
 	/'
@@ -47,8 +52,11 @@
 #endif
 
 
+/'---------------------------
+| test for reserved symbols |
+---------------------------'/
 ''
-#if ((FBCU_ENABLE_MACROS<>0) and (FBCU_ENABLE_CHECKS<>0))
+#if ((FBCU_ENABLE_MACROS<>0) andalso (FBCU_ENABLE_CHECKS<>0))
 
 #if defined(TMP_FBCUNIT_SUITE_NAME)
 	#error "TMP_FBCUNIT_SUITE_NAME" symbol is reserved for fbcunit
@@ -116,20 +124,144 @@
 
 #endif '' ((FBCU_ENABLE_MACROS<>0) and (FBCU_ENABLE_CHECKS<>0))
 
-#if (FBCU_ENABLE_TRACE<>0)
-	#define FBCU_TRACE(msg_) #print FBCU_TRACE: msg_
-#else
-	#define FBCU_TRACE(msg_)
+
+#define FBCU_VER_MAJOR 0
+#define FBCU_VER_MINOR 1
+
+#ifndef FBCU_NULL
+#define FBCU_NULL 0
 #endif
 
-''
+#define CU_ASSERT( a )               fbcu.CU_ASSERT_( (a), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT(" #a ")" )
+#define CU_ASSERT_EQUAL( a, b )      fbcu.CU_ASSERT_( ((a)=(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_EQUAL(" #a "," #b ")" )
+#define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
+#define CU_ASSERT_TRUE( a )          fbcu.CU_ASSERT_( (a)=true, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_TRUE(" #a ")" )
+#define CU_ASSERT_FALSE( a )         fbcu.CU_ASSERT_( (a)=false, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_FALSE(" #a ")" )
+#define CU_FAIL( msg )               fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
+#define CU_FAIL_FATAL( a )           fbcu.CU_ASSERT_FATAL_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL_FATAL(" #a ")" )
+#define CU_PASS( msg )               fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
+
+
+/'-----------------------------
+| fbcunit code emitter macros |
+-----------------------------'/
+
 #if (FBCU_ENABLE_MACROS<>0)
 
-'' FBCU macro code emitters
-#macro SUITE_EMIT( suite_name )
-	namespace tests.##suite_name
-	FBCU_TRACE( "SUITE" suite_name )
-#endmacro
+	#if (FBCU_ENABLE_TRACE<>0)
+		#define FBCU_TRACE(msg_) #print FBCU_TRACE: msg_
+	#else
+		#define FBCU_TRACE(msg_)
+	#endif
+
+	#if( __FB_LANG__ = "qb" )
+
+		#macro SUITE_EMIT( suite_name )
+			FBCU_TRACE( "SUITE" suite_name )
+		#endmacro
+
+		#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
+			sub suite_name##_ctor cdecl () __constructor
+				fbcu.add_suite( #suite_name, init_proc, exit_proc )
+			end sub
+			FBCU_TRACE( "END_SUITE" suite_name )
+		#endmacro
+
+		#macro SUITE_INIT_EMIT( suite_name )
+			function suite_name##.init cdecl () as long
+			FBCU_TRACE( "SUITE_INIT" )
+		#endmacro
+
+		#macro END_SUITE_INIT_EMIT()
+			end function
+			FBCU_TRACE( "END_SUITE_INIT" )
+		#endmacro
+
+		#macro SUITE_CLEANUP_EMIT( suite_name )
+			function suite_name##.cleanup cdecl () as long
+			FBCU_TRACE( "SUITE_CLEANUP" )
+		#endmacro
+
+		#macro END_SUITE_CLEANUP_EMIT()
+			end function
+			FBCU_TRACE( "END_SUITE_CLEANUP" )
+		#endmacro
+
+		#macro TEST_EMIT( test_name )
+			#if defined(TMP_FBCUNIT_SUITE_NAME)
+				sub TMP_FBCUNIT_SUITE_NAME##.test_name cdecl ()
+			#else
+				sub fbcu_global.test_name cdecl ()
+			#endif
+			FBCU_TRACE( "TEST" test_name )
+		#endmacro
+
+		#macro END_TEST_EMIT( suite_name, test_name, global )
+			end sub
+			sub suite_name##.##test_name##.ctor cdecl () __constructor
+				fbcu.add_test( #test_name, @suite_name##.##test_name, global )
+			end sub
+			FBCU_TRACE( "END_TEST" test_name )
+		#endmacro
+
+	#else '' ( __FB_LANG__ <> "qb" )
+
+		#macro SUITE_EMIT( suite_name )
+			namespace tests.##suite_name
+			FBCU_TRACE( "SUITE" suite_name )
+		#endmacro
+
+		#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
+				sub suite_name##_ctor cdecl () constructor
+					fbcu.add_suite( #suite_name, init_proc, exit_proc )
+				end sub
+			end namespace
+			FBCU_TRACE( "END_SUITE" suite_name )
+		#endmacro
+
+		#macro SUITE_INIT_EMIT( suite_name )
+				function init cdecl () as long
+			FBCU_TRACE( "SUITE_INIT" )
+		#endmacro
+
+		#macro END_SUITE_INIT_EMIT()
+				end function
+			FBCU_TRACE( "END_SUITE_INIT" )
+		#endmacro
+
+		#macro SUITE_CLEANUP_EMIT( suite_name )
+				function cleanup cdecl () as long
+			FBCU_TRACE( "SUITE_CLEANUP" )
+		#endmacro
+
+		#macro END_SUITE_CLEANUP_EMIT()
+				end function
+			FBCU_TRACE( "END_SUITE_CLEANUP" )
+		#endmacro
+
+		#macro TEST_EMIT( test_name )
+				sub test_name cdecl ()
+			FBCU_TRACE( "TEST" test_name )
+		#endmacro
+
+		#macro END_TEST_EMIT( suite_name, test_name, global )
+				end sub
+				sub test_name##_ctor cdecl () constructor
+					fbcu.add_test( #test_name, @test_name, global )
+				end sub
+			FBCU_TRACE( "END_TEST" test_name )
+		#endmacro
+
+	#endif '' ( __FB_LANG__ <> "qb" )
+
+#endif '' (FBCU_ENABLE_MACROS<>0)
+
+
+/'-----------------------
+  fbcunit helper macros
+-----------------------'/
+
+#if (FBCU_ENABLE_MACROS<>0)
 
 #macro SUITE( suite_name )
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
@@ -137,20 +269,6 @@
 	#endif
 	#define TMP_FBCUNIT_SUITE_NAME suite_name
 	SUITE_EMIT( suite_name )
-#endmacro
-
-#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
-	#if( __FB_LANG__ = "qb" )
-		sub suite_name##_ctor cdecl () __constructor
-			fbcu_qb_add_suite( #suite_name, init_proc, exit_proc )
-		end sub
-	#else
-		sub suite_name##_ctor cdecl () constructor
-			fbcu.add_suite( #suite_name, init_proc, exit_proc )
-		end sub
-	end namespace
-	#endif
-	FBCU_TRACE( "END_SUITE" suite_name )
 #endmacro
 
 #macro END_SUITE
@@ -186,15 +304,6 @@
 
 #endmacro
 
-#macro SUITE_INIT_EMIT( suite_name )
-	#if( __FB_LANG__ = "qb" )
-		function suite_name##.init cdecl () as long
-	#else
-		function init cdecl () as long
-	#endif
-	FBCU_TRACE( "SUITE_INIT" )
-#endmacro
-
 #macro SUITE_INIT
 	#if not defined( TMP_FBCUNIT_SUITE_NAME )
 		#error FBCUNIT: unexpected "SUITE_INIT"
@@ -220,18 +329,8 @@
 	#elseif defined( TMP_FBCUNIT_SUITE_IN_CLEANUP )
 		#error FBCUNIT: mismatched END_SUITE_INIT
 	#endif
-	end function
+	END_SUITE_INIT_EMIT()
 	#undef TMP_FBCUNIT_SUITE_IN_INIT
-	FBCU_TRACE( "END_SUITE_INIT" )
-#endmacro
-
-#macro SUITE_CLEANUP_EMIT( suite_name )
-	#if( __FB_LANG__ = "qb" )
-		function suite_name##.cleanup cdecl () as long
-	#else
-		function cleanup cdecl () as long
-	#endif
-	FBCU_TRACE( "SUITE_CLEANUP" )
 #endmacro
 
 #macro SUITE_CLEANUP
@@ -259,22 +358,8 @@
 	#elseif defined( TMP_FBCUNIT_SUITE_IN_INIT )
 		#error FBCUNIT: mismatched "END_SUITE_CLEANUP"
 	#endif
-	end function
+	END_SUITE_INIT_EMIT()
 	#undef TMP_FBCUNIT_SUITE_IN_CLEANUP
-	FBCU_TRACE( "END_SUITE_CLEANUP" )
-#endmacro
-
-#macro TEST_EMIT( test_name )
-	#if( __FB_LANG__ = "qb" )
-		#if defined(TMP_FBCUNIT_SUITE_NAME)
-			sub TMP_FBCUNIT_SUITE_NAME##.test_name cdecl ()
-		#else
-			sub fbcu_global.test_name cdecl ()
-		#endif
-	#else
-		sub test_name cdecl ()
-	#endif
-	FBCU_TRACE( "TEST" test_name )
 #endmacro
 
 #macro TEST( test_name )
@@ -287,21 +372,6 @@
 	#endif
 	#define TMP_FBCUNIT_TEST_NAME test_name
     TEST_EMIT( test_name )
-#endmacro
-
-#macro END_TEST_EMIT( suite_name, test_name, global )
-	#if (__FB_LANG__ = "qb")
-		end sub
-		sub suite_name##.##test_name##.ctor cdecl () __constructor
-			fbcu_qb_add_test( #test_name, @suite_name##.##test_name, global )
-		end sub
-	#else
-		end sub
-		sub test_name##_ctor cdecl () constructor
-			fbcu.add_test( #test_name, @test_name, global )
-		end sub
-	#endif
-	FBCU_TRACE( "END_TEST" test_name )
 #endmacro
 
 #macro END_TEST
@@ -319,12 +389,66 @@
 
 #endif '' (FBCU_ENABLE_MACROS<>0)
 
+#if( __FB_LANG__ = "qb" )
+
+	declare function fbcu.find_suite alias "fbcu_find_suite_qb" _
+		( _
+			byval suite_name as __zstring __ptr = FBCU_NULL _
+		) as long
+
+	declare sub fbcu.add_suite alias "fbcu_add_suite_qb" _
+		( _
+			byval suite_name as __zstring __ptr = FBCU_NULL, _
+			byval init_proc as function cdecl ( ) as long = FBCU_NULL, _
+			byval term_proc as function cdecl ( ) as long = FBCU_NULL _
+		)
+
+	declare function fbcu.get_suite_name alias "fbcu_get_suite_name_qb" _
+		( _
+		) as const __zstring __ptr
+
+	declare sub fbcu.add_test alias "fbcu_add_test_qb" _
+		( _
+			byval test_name as __zstring __ptr = FBCU_NULL, _
+			byval test_proc as sub cdecl ( ) = FBCU_NULL, _
+			byval is_global as __boolean = __false _
+		)
+
+	declare sub fbcu.run_tests alias "fbcu_run_tests_qb" _
+		( _
+			byval show_summary as __boolean = __true _
+		)
+
+	declare sub fbcu.show_results alias "fbcu_show_results_qb" _
+		( _
+		)
+
+	declare sub fbcu.CU_ASSERT_ alias "fbcu_CU_ASSERT_qb_" _
+		( _
+			byval value as long, _
+			byval fil as __zstring __ptr, _
+			byval lin as long, _
+			byval fun as __zstring __ptr, _
+			byval msg as __zstring __ptr _
+		)
+
+	declare sub fbcu.CU_ASSERT_FATAL_ alias "fbcu_CU_ASSERT_FATAL_qb_" _
+		( _
+			byval value as long, _
+			byval fil as __zstring __ptr, _
+			byval lin as long, _
+			byval fun as __zstring __ptr, _
+			byval msg as __zstring __ptr _
+		)
+
+#else
+
 namespace fbcu
 
 	declare function find_suite _
 		( _
 			byval suite_name as zstring ptr = FBCU_NULL _
-		) as integer
+		) as long
 
 	declare sub add_suite _
 		( _
@@ -355,22 +479,24 @@ namespace fbcu
 
 	declare sub CU_ASSERT_ _
 		( _
-			byval value as integer, _
+			byval value as long, _
 			byval fil as zstring ptr, _
-			byval lin as integer, _
+			byval lin as long, _
 			byval fun as zstring ptr, _
 			byval msg as zstring ptr _
 		)
 
 	declare sub CU_ASSERT_FATAL_ _
 		( _
-			byval value as integer, _
+			byval value as long, _
 			byval fil as zstring ptr, _
-			byval lin as integer, _
+			byval lin as long, _
 			byval fun as zstring ptr, _
 			byval msg as zstring ptr _
 		)
 
 end namespace
+
+#endif '' ( __FB_LANG__ <> "qb" )
 
 #endif

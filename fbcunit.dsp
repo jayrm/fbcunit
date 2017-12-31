@@ -115,6 +115,10 @@ SOURCE=.\todo.txt
 
 SOURCE=.\src\fbcunit.bas
 # End Source File
+# Begin Source File
+
+SOURCE=.\src\fbcunit_qb.bas
+# End Source File
 # End Group
 # Begin Group "inc"
 
@@ -166,6 +170,10 @@ SOURCE=.\examples\ex04.bas
 # Begin Source File
 
 SOURCE=.\examples\ex05.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\examples\ex06.bas
 # End Source File
 # End Group
 # End Target
