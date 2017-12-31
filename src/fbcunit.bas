@@ -2,6 +2,9 @@
 
 #ifndef FBCU_SUITE_COUNT_START
 #define FBCU_SUITE_COUNT_START 16
+#elseif (FBCU_SUITE_COUNT_START <= 0)
+#undef FBCU_SUITE_COUNT_START 16
+#define FBCU_SUITE_COUNT_START 16
 #endif
 
 type FBCU_SUITE
@@ -35,7 +38,7 @@ dim shared fbcu_tests_count as integer = 0
 
 #define INVALID_INDEX 0
 
-dim shared fbcu_suite_index_global as integer = INVALID_INDEX
+dim shared fbcu_suite_default_index as integer = INVALID_INDEX
 dim shared fbcu_suite_index as integer = INVALID_INDEX
 dim shared fbcu_test_index as integer = INVALID_INDEX
 
@@ -88,7 +91,7 @@ namespace fbcu
 			if( suite_name ) then
 				.name = *suite_name
 			else
-				.name = "[global*" & fbcu_suites_count & "]"
+				.name = "[global]"
 			end if
 
 			.name_nocase = lcase(.name)
@@ -107,6 +110,19 @@ namespace fbcu
 	end sub
 
 	''
+	function get_suite_name _
+		( _
+		) as const zstring ptr
+
+		if( fbcu_suite_index > 0 ) then
+			function = strptr( fbcu_suites( fbcu_suite_index ).name )
+		else
+			function = FBCU_NULL
+		end if
+
+	end function
+
+	''
 	sub add_test _
 		( _
 			byval test_name as zstring ptr, _
@@ -115,7 +131,7 @@ namespace fbcu
 		)
 		
 		if( is_global ) then
-			fbcu_suite_index = fbcu_suite_index_global
+			fbcu_suite_index = fbcu_suite_default_index
 		end if
 		
 		if( fbcu_suite_index = INVALID_INDEX ) then
@@ -150,7 +166,7 @@ namespace fbcu
 		fbcu_test_index = fbcu_tests_count
 
 		if( is_global ) then
-			fbcu_suite_index_global = fbcu_tests_count
+			fbcu_suite_default_index = fbcu_suite_index
 		end if
 
 	end sub

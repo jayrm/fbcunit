@@ -1,29 +1,5 @@
 fbcunit TODO list:
 
-[ ] fix the of adding tests to the default suite
-	see tests/fbcu_global.bas and then compare
-	to the output when running tests/tests.exe
-	The global suite index is not set correctly
-	or is set at the wrong time -- a bug
-
-[ ] add SUITE_INIT and SUITE_EXIT macros to allow
-	creating a proc for code that needs to run at
-	beginning and end of a suite at run-time.
-
-		SUITE( fbcu )
-			SUITE_INIT
-				'' start-up code
-			END_SUITE_INIT
-			SUITE_EXIT
-				'' clean-up code
-			END_SUITE_EXIT
-
-			TEST( first )
-			END_TEST
-
-			... etc
-		END_SUITE
-
 [ ] group the tests by suite before running the list
 	of tests.  Currently the sequence is by test then
 	by suite creating NxM comparisons.
@@ -33,3 +9,28 @@ fbcunit TODO list:
 	same suite could be defined across multiple
 	source modules.  currently is a trivial sequential
 	scan and won't scale well.
+
+[X] fix the of adding tests to the default suite
+	see tests/fbcu_global.bas and then compare
+	to the output when running tests/tests.exe
+	The global suite index is not set correctly
+	or is set at the wrong time -- a bug
+
+[X] add SUITE_INIT and SUITE_CLEANUP macros to allow
+	creating a proc for code that needs to run at
+	beginning and end of a suite at run-time.
+
+		SUITE( fbcu )
+			SUITE_INIT
+				'' start-up code
+			END_SUITE_INIT
+			SUITE_CLEANUP
+				'' clean-up code
+			END_SUITE_CLEANUP
+
+			TEST( first )
+			END_TEST
+
+			... etc
+		END_SUITE
+

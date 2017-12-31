@@ -15,6 +15,9 @@ TEST_EXE  := tests/tests.exe
 
 EXAMPLES := examples/ex01.exe
 EXAMPLES += examples/ex02.exe
+EXAMPLES += examples/ex03.exe
+EXAMPLES += examples/ex04.exe
+EXAMPLES += examples/ex05.exe
 
 FBCFLAGS += -g -exx -i ./inc
 

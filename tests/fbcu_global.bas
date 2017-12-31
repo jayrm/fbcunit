@@ -3,6 +3,7 @@
 '' tests added to global suite
 
 TEST( default1 )
+	CU_ASSERT( *fbcu.get_suite_name() = "[global]" )
 	CU_ASSERT( true )
 END_TEST
 
@@ -14,13 +15,17 @@ TEST( default3 )
 	CU_ASSERT( true )
 END_TEST
 
-SUITE( some_other_suite )
+'' tests added to a named suite
+
+SUITE( named_suite )
 
 	TEST( first )
+		CU_ASSERT( *fbcu.get_suite_name() = "named_suite" )
 		CU_ASSERT( true )
 	END_TEST
 
 	TEST( second )
+		CU_ASSERT( *fbcu.get_suite_name() = "named_suite" )
 		CU_ASSERT( true )
 	END_TEST
 

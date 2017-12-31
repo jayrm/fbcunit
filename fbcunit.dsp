@@ -155,6 +155,18 @@ SOURCE=.\examples\ex01.bas
 
 SOURCE=.\examples\ex02.bas
 # End Source File
+# Begin Source File
+
+SOURCE=.\examples\ex03.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\examples\ex04.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\examples\ex05.bas
+# End Source File
 # End Group
 # End Target
 # End Project

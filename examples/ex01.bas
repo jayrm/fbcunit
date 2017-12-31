@@ -1,7 +1,7 @@
 /'
 	fbcunit example #1 -- ex01.bas
 
-		- direct use of CU_*() macros
+		- direct use of CU_ASSERT() macro
 		- failed assertions will be displayed immediately
 		- fbcu.run_tests not needed
 		- fbcu.show_results optional
