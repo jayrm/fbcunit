@@ -17,6 +17,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ----------------------------------------------'/
 
+#define FBCU_VER_MAJOR 0
+#define FBCU_VER_MINOR 2
 
 #inclib "fbcunit"
 
@@ -123,10 +125,6 @@
 #endif
 
 #endif '' ((FBCU_ENABLE_MACROS<>0) and (FBCU_ENABLE_CHECKS<>0))
-
-
-#define FBCU_VER_MAJOR 0
-#define FBCU_VER_MINOR 1
 
 #ifndef FBCU_NULL
 #define FBCU_NULL 0
