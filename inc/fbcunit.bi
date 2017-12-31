@@ -3,8 +3,8 @@
 
 #inclib "fbcunit"
 
-#ifndef NULL
-#define NULL 0
+#ifndef FBCU_NULL
+#define FBCU_NULL 0
 #endif
 
 #define FBCU_VER_MAJOR 0
@@ -35,7 +35,7 @@
 #endmacro
 
 #macro END_SUITE_EMIT( suite_name )
-	sub suite_name##ctor () constructor
+	sub suite_name##_ctor cdecl () constructor 
 		fbcu.add_suite( #suite_name )
 	end sub
 	end namespace
@@ -71,7 +71,7 @@
 
 #macro END_TEST_EMIT( test_name )
 	end sub
-	sub test_name##ctor () constructor
+	sub test_name##_ctor cdecl () constructor
 		fbcu.add_test( #test_name, @test_name )
 	end sub
 	#if FBCU_ENABLE_TRACE<>0
@@ -92,17 +92,22 @@
 
 namespace fbcu
 
+	declare function find_suite _
+		( _
+			byval suite_name as zstring ptr = FBCU_NULL _
+		) as integer
+
 	declare sub add_suite _
 		( _
-			byval n as zstring ptr = 0, _
-			byval init as function cdecl ( ) as long = 0, _
-			byval cleanup as function cdecl ( ) as long = 0 _
+			byval suite_name as zstring ptr = FBCU_NULL, _
+			byval init_proc as function cdecl ( ) as long = FBCU_NULL, _
+			byval term_proc as function cdecl ( ) as long = FBCU_NULL _
 		)
 
 	declare sub add_test _
 		( _
-			byval n as zstring ptr, _
-			byval s as sub cdecl ( ) _
+			byval test_name as zstring ptr, _
+			byval test_proc as sub cdecl ( ) _
 		)
 
 	declare sub run_tests _

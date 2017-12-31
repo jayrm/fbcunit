@@ -1,7 +1,16 @@
 #include once "fbcunit.bi"
 
+#ifndef NULL
+#define NULL 0
+#endif
+
+#ifndef FBCU_SUITE_COUNT_START
+#define FBCU_SUITE_COUNT_START 16
+#endif
+
 type FBCU_SUITE
 	name as string
+	name_nocase as string
 	init_proc as function cdecl ( ) as long
 	term_proc as function cdecl ( ) as long
 	test_count as integer
@@ -12,6 +21,7 @@ end type
 
 type FBCU_TEST
 	name as string
+	name_nocase as string
 	test_proc as sub cdecl ( )
 	suite_index as integer
 	assert_count as integer
@@ -19,56 +29,88 @@ type FBCU_TEST
 	fail_count as integer
 end type
 
-redim shared fbcu_suites(1 to 16) as FBCU_SUITE
-dim shared fbcu_suites_max as integer = 16
+redim shared fbcu_suites(1 to FBCU_SUITE_COUNT_START) as FBCU_SUITE
+dim shared fbcu_suites_max as integer = FBCU_SUITE_COUNT_START
 dim shared fbcu_suites_count as integer = 0
-dim shared fbcu_suite_index as integer = 0
 
-redim shared fbcu_tests(1 to 16) as FBCU_TEST
-dim shared fbcu_tests_max as integer = 16
+redim shared fbcu_tests(1 to FBCU_SUITE_COUNT_START) as FBCU_TEST
+dim shared fbcu_tests_max as integer = FBCU_SUITE_COUNT_START
 dim shared fbcu_tests_count as integer = 0
+
+dim shared fbcu_suite_index as integer = 0
 
 namespace fbcu
 
 	''
+	function find_suite _
+		( _
+			byval suite_name as zstring ptr = FBCU_NULL _
+		) as integer
+
+		if( suite_name = FBCU_NULL ) then
+			return 0
+		end if
+
+		dim s as string = lcase( *suite_name )
+
+		for i as integer = 1 to fbcu_suites_count
+			if( fbcu_suites(i).name_nocase = s ) then
+				return i
+			end if
+		next
+
+		return 0
+
+	end function
+
+	''
 	sub add_suite _
 		( _
-			byval n as zstring ptr = 0, _
-			byval init as function cdecl ( ) as long = 0, _
-			byval cleanup as function cdecl ( ) as long = 0 _
+			byval suite_name as zstring ptr = FBCU_NULL, _
+			byval init_proc as function cdecl ( ) as long = FBCU_NULL, _
+			byval term_proc as function cdecl ( ) as long = FBCU_NULL _
 		)
 		
+		fbcu_suite_index = find_suite( suite_name )
+
+		if( fbcu_suite_index > 0 ) then
+			exit sub
+		end if
+
 		if( fbcu_suites_count >= fbcu_suites_max ) then
 			fbcu_suites_max = fbcu_suites_max * 2
 			redim preserve fbcu_suites( 1 to fbcu_suites_max )
 		end if
 
 		fbcu_suites_count += 1
-		fbcu_suite_index = fbcu_suites_count
 
-		with fbcu_suites( fbcu_suite_index )
-			if( n ) then
-				.name = *n
+		with fbcu_suites( fbcu_suites_count )
+			if( suite_name ) then
+				.name = *suite_name
 			else
-				.name = "[global*" & fbcu_suite_index & "]"
+				.name = "[global*" & fbcu_suites_count & "]"
 			end if
 
-			.init_proc = init
-			.term_proc = cleanup
+			.name_nocase = lcase(.name)
+
+			.init_proc = init_proc
+			.term_proc = term_proc
 			.test_count = 0
 			.assert_count = 0
 			.pass_count = 0
 			.fail_count = 0
 
 		end with
+
+		fbcu_suite_index = fbcu_suites_count
 		
 	end sub
 
 	''
 	sub add_test _
 		( _
-			byval n as zstring ptr, _
-			byval s as sub cdecl ( ) _
+			byval test_name as zstring ptr, _
+			byval test_proc as sub cdecl ( ) _
 		)
 
 		if( fbcu_suite_index = 0 ) then	
@@ -87,13 +129,13 @@ namespace fbcu
 		end with
 
 		with fbcu_tests( fbcu_tests_count )
-			if( n ) then
-				.name = *n
+			if( test_name ) then
+				.name = *test_name
 			else
 				.name = "[test*" & fbcu_tests_count & "]"
 			end if
 
-			.test_proc = s
+			.test_proc = test_proc
 			.suite_index = fbcu_suite_index
 			.assert_count = 0
 			.pass_count = 0
@@ -175,7 +217,7 @@ namespace fbcu
 		print " Asserts    Passed    Failed  Suite                                        Tests" 
 		print "--------  --------  --------  ----------------------------------------  --------"
 
-		for fbcu_suite_index = 1 to fbcu_suites_count
+		for fbcu_suite_index as integer = 1 to fbcu_suites_count
 
 			with fbcu_suites( fbcu_suite_index )
 

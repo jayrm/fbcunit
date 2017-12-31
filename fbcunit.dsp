@@ -89,7 +89,15 @@ SOURCE=.\makefile
 # End Source File
 # Begin Source File
 
+SOURCE=".\mk-jayrm.bat"
+# End Source File
+# Begin Source File
+
 SOURCE=.\mk.bat
+# End Source File
+# Begin Source File
+
+SOURCE=.\mk.sh
 # End Source File
 # Begin Source File
 
