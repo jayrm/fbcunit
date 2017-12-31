@@ -71,14 +71,38 @@
 #if defined(SUITE)
 	#error "SUITE" symbol is reserved for fbcunit
 #endif
+#if defined(SUITE_EMIT)
+	#error "SUITE_EMIT" symbol is reserved for fbcunit
+#endif
 #if defined(END_SUITE)
 	#error "END_SUITE" symbol is reserved for fbcunit
 #endif
 #if defined(END_SUITE_EMIT)
 	#error "END_SUITE_EMIT" symbol is reserved for fbcunit
 #endif
+#if defined(SUITE_INIT)
+	#error "SUITE_INIT" symbol is reserved for fbcunit
+#endif
+#if defined(SUITE_INIT_EMIT)
+	#error "SUITE_INIT_EMIT" symbol is reserved for fbcunit
+#endif
+#if defined(END_SUITE_INIT)
+	#error "END_SUITE_INIT" symbol is reserved for fbcunit
+#endif
+#if defined(SUITE_CLEANUP)
+	#error "SUITE_CLEANUP" symbol is reserved for fbcunit
+#endif
+#if defined(SUITE_CLEANUP_EMIT)
+	#error "SUITE_CLEANUP_EMIT" symbol is reserved for fbcunit
+#endif
+#if defined(END_SUITE_CLEANUP)
+	#error "END_SUITE_CLEANUP" symbol is reserved for fbcunit
+#endif
 #if defined(TEST)
 	#error "TEST" symbol is reserved for fbcunit
+#endif
+#if defined(TEST_EMIT)
+	#error "TEST_EMIT" symbol is reserved for fbcunit
 #endif
 #if defined(END_TEST)
 	#error "END_TEST" symbol is reserved for fbcunit
@@ -86,40 +110,47 @@
 #if defined(END_TEST_EMIT)
 	#error "END_TEST_EMIT" symbol is reserved for fbcunit
 #endif
+#if defined(FBCU_TRACE)
+	#error "FBCU_TRACE" symbol is reserved for fbcunit
+#endif
 
 #endif '' ((FBCU_ENABLE_MACROS<>0) and (FBCU_ENABLE_CHECKS<>0))
 
+#if (FBCU_ENABLE_TRACE<>0)
+	#define FBCU_TRACE(msg_) #print FBCU_TRACE: msg_
+#else
+	#define FBCU_TRACE(msg_)
+#endif
 
 ''
 #if (FBCU_ENABLE_MACROS<>0)
+
+'' FBCU macro code emitters
+#macro SUITE_EMIT( suite_name )
+	namespace tests.##suite_name
+	FBCU_TRACE( "SUITE" suite_name )
+#endmacro
 
 #macro SUITE( suite_name )
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
 		#error FBCUNIT: test suites can not be nested, or missing "END_SUITE" before "SUITE"
 	#endif
 	#define TMP_FBCUNIT_SUITE_NAME suite_name
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE: "SUITE" suite_name
-	#endif
-	namespace tests.##suite_name
+	SUITE_EMIT( suite_name )
 #endmacro
 
-#macro END_SUITE_EMIT( suite_name )
-		sub suite_name##_ctor cdecl () constructor 
-			#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
-				fbcu.add_suite( #suite_name, procptr(init), procptr(cleanup) )
-			#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
-				fbcu.add_suite( #suite_name, procptr(init), FBCU_NULL )
-			#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
-				fbcu.add_suite( #suite_name, FBCU_NULL, procptr(cleanup) )
-			#else
-				fbcu.add_suite( #suite_name )
-			#endif
+#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
+	#if( __FB_LANG__ = "qb" )
+		sub suite_name##_ctor cdecl () __constructor
+			fbcu_qb_add_suite( #suite_name, init_proc, exit_proc )
+		end sub
+	#else
+		sub suite_name##_ctor cdecl () constructor
+			fbcu.add_suite( #suite_name, init_proc, exit_proc )
 		end sub
 	end namespace
-	#if (FBCU_ENABLE_TRACE<>0)
-		#print FBCU_TRACE: "END_SUITE" suite_name
 	#endif
+	FBCU_TRACE( "END_SUITE" suite_name )
 #endmacro
 
 #macro END_SUITE
@@ -134,7 +165,15 @@
 	#endif
 
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
-		END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME )
+		#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
+			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, procptr(init), procptr(cleanup) )
+		#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
+			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, procptr(init), FBCU_NULL )
+		#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
+			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, FBCU_NULL, procptr(cleanup) )
+		#else
+			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, FBCU_NULL, FBCU_NULL )
+		#endif
 	#else
 		#error FBCUNIT: mismatched "END_SUITE"
 	#endif
@@ -145,6 +184,15 @@
 	#undef TMP_FBCUNIT_SUITE_IN_CLEANUP
 	#undef TMP_FBCUNIT_SUITE_HAVE_CLEANUP
 
+#endmacro
+
+#macro SUITE_INIT_EMIT( suite_name )
+	#if( __FB_LANG__ = "qb" )
+		function suite_name##.init cdecl () as long
+	#else
+		function init cdecl () as long
+	#endif
+	FBCU_TRACE( "SUITE_INIT" )
 #endmacro
 
 #macro SUITE_INIT
@@ -161,10 +209,7 @@
 	#endif
 	#define TMP_FBCUNIT_SUITE_HAVE_INIT
 	#define TMP_FBCUNIT_SUITE_IN_INIT
-	function init cdecl () as long
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:     "SUITE_INIT"
-	#endif
+	SUITE_INIT_EMIT( TMP_FBCUNIT_SUITE_NAME )
 #endmacro
 
 #macro END_SUITE_INIT
@@ -177,9 +222,16 @@
 	#endif
 	end function
 	#undef TMP_FBCUNIT_SUITE_IN_INIT
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:     "END_SUITE_INIT"
+	FBCU_TRACE( "END_SUITE_INIT" )
+#endmacro
+
+#macro SUITE_CLEANUP_EMIT( suite_name )
+	#if( __FB_LANG__ = "qb" )
+		function suite_name##.cleanup cdecl () as long
+	#else
+		function cleanup cdecl () as long
 	#endif
+	FBCU_TRACE( "SUITE_CLEANUP" )
 #endmacro
 
 #macro SUITE_CLEANUP
@@ -196,10 +248,7 @@
 	#endif
 	#define TMP_FBCUNIT_SUITE_HAVE_CLEANUP
 	#define TMP_FBCUNIT_SUITE_IN_CLEANUP
-	function cleanup cdecl () as long
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:    "SUITE_EXIT"
-	#endif
+	SUITE_CLEANUP_EMIT( TMP_FBCUNIT_SUITE_NAME )
 #endmacro
 
 #macro END_SUITE_CLEANUP
@@ -212,9 +261,20 @@
 	#endif
 	end function
 	#undef TMP_FBCUNIT_SUITE_IN_CLEANUP
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:     "END_SUITE_EXIT"
+	FBCU_TRACE( "END_SUITE_CLEANUP" )
+#endmacro
+
+#macro TEST_EMIT( test_name )
+	#if( __FB_LANG__ = "qb" )
+		#if defined(TMP_FBCUNIT_SUITE_NAME)
+			sub TMP_FBCUNIT_SUITE_NAME##.test_name cdecl ()
+		#else
+			sub fbcu_global.test_name cdecl ()
+		#endif
+	#else
+		sub test_name cdecl ()
 	#endif
+	FBCU_TRACE( "TEST" test_name )
 #endmacro
 
 #macro TEST( test_name )
@@ -226,29 +286,31 @@
 		#error FBCUNIT: missing "END_SUITE_CLEANUP" before "TEST"
 	#endif
 	#define TMP_FBCUNIT_TEST_NAME test_name
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:     "TEST" test_name
-	#endif
-	sub test_name cdecl ()
+    TEST_EMIT( test_name )
 #endmacro
 
-#macro END_TEST_EMIT( test_name )
-	end sub
-	sub test_name##_ctor cdecl () constructor
-	#if defined( TMP_FBCUNIT_SUITE_NAME )
-		fbcu.add_test( #test_name, @test_name, false )
+#macro END_TEST_EMIT( suite_name, test_name, global )
+	#if (__FB_LANG__ = "qb")
+		end sub
+		sub suite_name##.##test_name##.ctor cdecl () __constructor
+			fbcu_qb_add_test( #test_name, @suite_name##.##test_name, global )
+		end sub
 	#else
-		fbcu.add_test( #test_name, @test_name, true )
+		end sub
+		sub test_name##_ctor cdecl () constructor
+			fbcu.add_test( #test_name, @test_name, global )
+		end sub
 	#endif
-	end sub
-	#if (FBCU_ENABLE_TRACE<>0)
-	#print FBCU_TRACE:     "END_TEST" test_name
-	#endif
+	FBCU_TRACE( "END_TEST" test_name )
 #endmacro
 
 #macro END_TEST
 	#if defined( TMP_FBCUNIT_TEST_NAME )
-		END_TEST_EMIT( TMP_FBCUNIT_TEST_NAME )
+		#if defined( TMP_FBCUNIT_SUITE_NAME )
+			END_TEST_EMIT( TMP_FBCUNIT_SUITE_NAME, TMP_FBCUNIT_TEST_NAME, false )
+		#else
+			END_TEST_EMIT( fbcu_global, TMP_FBCUNIT_TEST_NAME, true )
+		#endif
 	#else
 		#error FBCUNIT: mismatched "END_TEST"
 	#endif
