@@ -1,29 +1,28 @@
 fbcunit version 0.1
 -------------------
-
 	Unit testing component for fbc compiler.  Provides macros 
 	and common code for unit testing fbc compiled sources. 
 
 
 Compiling
 ---------
-
-	To compile fbcunit library, from top level directory:
+	To compile fbcunit library, the test-suite (for fbcunit
+	itself), and examples, from top level directory:
 
 		$ make
 
 
 Testing
 -------
-
 	To test the library (with itself), from top level directory:
 
-		$ make tests && ./tests/tests.exe
+		$ tests/tests.exe
+
+	Also see ./examples directory for examples of usage
 
 
 Installing
 ----------
-
 	Copy the following files to the appropriate include and 
 	library directories:
 
@@ -33,10 +32,7 @@ Installing
 
 Usage
 -----
-
-	Minimal example program:
-
-		'' tests.bas
+	Simple example:
 
 		#include "fbcunit.bi"
 
@@ -48,25 +44,24 @@ Usage
 
 		fbcu.run_tests
 
-	See Also './tests' directory for example of usage
 
-
-Files
------
+Files & Directories
+-------------------
 
 	./readme.txt         this file
 
-	./changelog.txt      changelog for this library
+	./changelog.txt      changelog for fbcunit
 
 	./makefile           simple makefile for the library and tests
 
-	./inc/fbcunit.bi     header file: include this file in any source
-						 modules that define unit test procedures
+	./src/*.bas          source files
 
-	./src/tests.bas      main module for this library's tests
-						 this module runs the tests
-
-	./src/fbcu_test.bas  a few tests that test the unit test library
-						 itself
+	./inc/fbcunit.bi     header file for fbcunit library
 
 	./lib/libfbcunit.a   binary of the library
+
+	./tests/tests.bas    main module for testing fbcunit itself
+	./tests/fbcu_*.bas   unit test modules
+
+	./examples/*.bas     usage examples
+
