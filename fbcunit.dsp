@@ -125,11 +125,31 @@ SOURCE=.\inc\fbcunit.bi
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\tests\fbcu_test.bas
+SOURCE=.\tests\fbcu_global.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\tests\fbcu_multiple.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\tests\fbcu_sanity.bas
 # End Source File
 # Begin Source File
 
 SOURCE=.\tests\tests.bas
+# End Source File
+# End Group
+# Begin Group "examples"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\examples\ex01.bas
+# End Source File
+# Begin Source File
+
+SOURCE=.\examples\ex02.bas
 # End Source File
 # End Group
 # End Target

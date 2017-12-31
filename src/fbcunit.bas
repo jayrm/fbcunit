@@ -1,9 +1,5 @@
 #include once "fbcunit.bi"
 
-#ifndef NULL
-#define NULL 0
-#endif
-
 #ifndef FBCU_SUITE_COUNT_START
 #define FBCU_SUITE_COUNT_START 16
 #endif
@@ -37,7 +33,11 @@ redim shared fbcu_tests(1 to FBCU_SUITE_COUNT_START) as FBCU_TEST
 dim shared fbcu_tests_max as integer = FBCU_SUITE_COUNT_START
 dim shared fbcu_tests_count as integer = 0
 
-dim shared fbcu_suite_index as integer = 0
+#define INVALID_INDEX 0
+
+dim shared fbcu_suite_index_global as integer = INVALID_INDEX
+dim shared fbcu_suite_index as integer = INVALID_INDEX
+dim shared fbcu_test_index as integer = INVALID_INDEX
 
 namespace fbcu
 
@@ -48,7 +48,7 @@ namespace fbcu
 		) as integer
 
 		if( suite_name = FBCU_NULL ) then
-			return 0
+			return INVALID_INDEX
 		end if
 
 		dim s as string = lcase( *suite_name )
@@ -59,7 +59,7 @@ namespace fbcu
 			end if
 		next
 
-		return 0
+		return INVALID_INDEX
 
 	end function
 
@@ -73,7 +73,7 @@ namespace fbcu
 		
 		fbcu_suite_index = find_suite( suite_name )
 
-		if( fbcu_suite_index > 0 ) then
+		if( fbcu_suite_index <> INVALID_INDEX ) then
 			exit sub
 		end if
 
@@ -110,10 +110,15 @@ namespace fbcu
 	sub add_test _
 		( _
 			byval test_name as zstring ptr, _
-			byval test_proc as sub cdecl ( ) _
+			byval test_proc as sub cdecl ( ), _
+			byval is_global as boolean = false _
 		)
-
-		if( fbcu_suite_index = 0 ) then	
+		
+		if( is_global ) then
+			fbcu_suite_index = fbcu_suite_index_global
+		end if
+		
+		if( fbcu_suite_index = INVALID_INDEX ) then
 			add_suite( )
 		end if
 
@@ -142,6 +147,12 @@ namespace fbcu
 			.fail_count = 0
 		end with
 
+		fbcu_test_index = fbcu_tests_count
+
+		if( is_global ) then
+			fbcu_suite_index_global = fbcu_tests_count
+		end if
+
 	end sub
 
 	''
@@ -157,19 +168,20 @@ namespace fbcu
 	''
 	sub run_tests _
 		( _
+			byval show_summary as boolean = true _
 		)
 
 		print "--------------------------------------------------------------------------------"
 		print date & " " & time
 		print
-		print "TESTS STARTED"
+		print "TESTS"
 		print
 
 		for fbcu_suite_index = 1 to fbcu_suites_count
 
 			with fbcu_suites( fbcu_suite_index )
 
-				print .name
+				print "  "; .name
 
 				.assert_count = 0
 				.pass_count = 0
@@ -183,12 +195,12 @@ namespace fbcu
 					end if
 				end if
 
-				for i as integer = 1 to fbcu_tests_count
+				for fbcu_test_index as integer = 1 to fbcu_tests_count
 
-					with fbcu_tests( i )
+					with fbcu_tests( fbcu_test_index )
 						if( .suite_index = fbcu_suite_index ) then
 
-							print "  "; .name
+							print "    "; .name
 
 							if( .test_proc ) then
 								.test_proc()
@@ -204,6 +216,17 @@ namespace fbcu
 			end with
 
 		next
+
+		if( show_summary ) then
+			show_results()
+		end if
+
+	end sub
+
+	''
+	sub show_results _
+		( _
+		)
 
 		dim t_assert_count as integer = 0
 		dim t_pass_count as integer = 0
@@ -271,23 +294,32 @@ namespace fbcu
 			byval msg as zstring ptr _
 		)
 
-		if( fbcu_suite_index = 0 ) then	
+		if( fbcu_suite_index = INVALID_INDEX ) then	
 			add_suite( )
+		end if
+
+		if( fbcu_test_index = INVALID_INDEX ) then	
+			add_test( )
 		end if
 
 		'' increment assertions for current suite
 		fbcu_suites( fbcu_suite_index ).assert_count += 1
 
+		'' increment assertions for current test
+		fbcu_tests( fbcu_test_index ).assert_count += 1
+
 		'' pass
 		if( value ) then
 			'' increment pass for current suite
 			fbcu_suites( fbcu_suite_index ).pass_count += 1
+			fbcu_tests( fbcu_test_index ).pass_count += 1
 
 		'' fail
 		else
 			'' increment fail for current suite
 			fbcu_suites( fbcu_suite_index ).fail_count += 1
-			print "    "; *fil & "(" & lin & ") : error : " & *fun & " " & *msg
+			fbcu_tests( fbcu_test_index ).fail_count += 1
+			print "      "; *fil & "(" & lin & ") : error : " & *fun & " " & *msg
 
 		end if
 

@@ -46,7 +46,7 @@
 
 #macro END_SUITE_()
 	#if defined( TMP_FBCUNIT_TEST_NAME )
-	#error FBCUNIT: missing END_TEST() before END_SUITE
+	#error FBCUNIT: missing END_TEST before END_SUITE
 	#endif
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
 	END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME )
@@ -72,7 +72,11 @@
 #macro END_TEST_EMIT( test_name )
 	end sub
 	sub test_name##_ctor cdecl () constructor
-		fbcu.add_test( #test_name, @test_name )
+	#if defined( TMP_FBCUNIT_SUITE_NAME )
+		fbcu.add_test( #test_name, @test_name, false )
+	#else
+		fbcu.add_test( #test_name, @test_name, true )
+	#endif
 	end sub
 	#if FBCU_ENABLE_TRACE<>0
 	#print end of test test_name
@@ -106,11 +110,17 @@ namespace fbcu
 
 	declare sub add_test _
 		( _
-			byval test_name as zstring ptr, _
-			byval test_proc as sub cdecl ( ) _
+			byval test_name as zstring ptr = FBCU_NULL, _
+			byval test_proc as sub cdecl ( ) = FBCU_NULL, _
+			byval is_global as boolean = false _
 		)
 
 	declare sub run_tests _
+		( _
+			byval show_summary as boolean = true _
+		)
+
+	declare sub show_results _
 		( _
 		)
 

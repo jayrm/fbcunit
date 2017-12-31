@@ -1,12 +1,17 @@
 call c:\batch\setpath.bat FBWIN
 echo mk-jayrm.bat
 
+REM touch inc/fbcunit.bi
+
 make
 if ERRORLEVEL 1 goto DONE
 
 make tests
 if ERRORLEVEL 1 goto DONE
 
-tests\tests.exe
+REM tests\tests.exe
+
+REM examples\ex01.exe
+REM examples\ex02.exe
 
 :DONE
