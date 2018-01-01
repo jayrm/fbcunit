@@ -1,10 +1,10 @@
 fbcunit TODO list:
 
-[ ] group the tests by suite before running the list
+[X] group the tests by suite before running the list
 	of tests.  Currently the sequence is by test then
 	by suite creating NxM comparisons.
 
-[ ] create a hash look-up or similar for find_suite()
+[X] create a hash look-up or similar for find_suite()
 	find_suite is needed because possible that the
 	same suite could be defined across multiple
 	source modules.  currently is a trivial sequential

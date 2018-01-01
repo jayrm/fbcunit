@@ -1,11 +1,18 @@
 #include once "fbcunit.bi"
 
+'' FBCU_SUITE_COUNT_START is a compile time option that can
+'' set the starting size of the suite and test tables
+
 #ifndef FBCU_SUITE_COUNT_START
 #define FBCU_SUITE_COUNT_START 16
 #elseif (FBCU_SUITE_COUNT_START <= 0)
 #undef FBCU_SUITE_COUNT_START 16
 #define FBCU_SUITE_COUNT_START 16
 #endif
+
+'' ------------------
+'' module level stuff
+'' ------------------
 
 type FBCU_SUITE
 	name as string
@@ -45,6 +52,82 @@ dim shared fbcu_suite_default_index as integer = INVALID_INDEX
 dim shared fbcu_suite_index as integer = INVALID_INDEX
 dim shared fbcu_test_index as integer = INVALID_INDEX
 
+'' --------------------
+'' hash for suite names
+'' --------------------
+
+declare function hash_compute ( byval s as const zstring ptr ) as uinteger
+declare sub hash_grow()
+declare function hash_find ( byval s as const zstring ptr ) as integer
+declare function hash_add ( byval s as const zstring ptr, byval suite_index as const integer ) as integer
+
+'' NB: hash() table is zero based
+
+#define INVALID_HASH_INDEX -1
+
+redim shared hash( 0 to FBCU_SUITE_COUNT_START*2 - 1) as integer
+dim shared hash_size as integer = FBCU_SUITE_COUNT_START*2
+dim shared hash_count as integer
+
+private function hash_compute ( byval s as const zstring ptr ) as uinteger
+	dim index as uinteger = 0, n as integer = len( *s )
+	for i as integer = 0 to n-1
+		index += s[i] + ( index shl 3 )
+	next i
+	function = index shl 4
+end function
+
+private sub hash_grow()
+	hash_size *= 2
+	redim hash(0 to hash_size-1) as integer
+	for index as integer = 0 to hash_size-1
+		hash(index) = 0
+	next
+	for index as integer = 1 to fbcu_suites_count
+		hash_add( strptr(fbcu_suites(index).name_nocase), index )
+	next 
+end sub
+
+'' returns index in to hash()
+private function hash_find ( byval s as const zstring ptr ) as integer
+	dim index as integer = hash_compute( s ) mod hash_size
+	dim start as integer = index
+	while( hash(index) )
+		if( *s = fbcu_suites(hash(index)).name_nocase ) then
+			exit while
+		end if
+		index += 1
+		index mod= hash_size
+		if( index = start ) then
+			return INVALID_HASH_INDEX
+		end if
+	wend
+	function = index
+end function
+
+'' returns index in to hash()
+private function hash_add ( byval s as const zstring ptr, byval suite_index as const integer ) as integer
+	dim index as integer = hash_find( s )
+	if( index ) then
+		if( hash(index) = INVALID_INDEX ) then
+			hash(index) = suite_index
+			hash_count += 1
+			if( hash_count > (hash_size \ 2) ) then
+				hash_grow()
+				index = hash_find( s )
+			end if
+		end if
+		function = index
+	else
+		function = INVALID_HASH_INDEX
+	end if
+end function
+
+
+'' ----------------------
+'' fbcunit implementation
+'' ----------------------
+
 namespace fbcu
 
 	''
@@ -59,11 +142,12 @@ namespace fbcu
 
 		dim s as string = lcase( *suite_name )
 
-		for i as integer = 1 to fbcu_suites_count
-			if( fbcu_suites(i).name_nocase = s ) then
-				return i
-			end if
-		next
+		dim index as integer = hash_find(strptr(s))
+		if( index ) then
+			function = hash(index)
+		else
+			function = INVALID_INDEX
+		end if
 
 		return INVALID_INDEX
 
@@ -89,8 +173,9 @@ namespace fbcu
 		end if
 
 		fbcu_suites_count += 1
+		fbcu_suite_index = fbcu_suites_count
 
-		with fbcu_suites( fbcu_suites_count )
+		with fbcu_suites( fbcu_suite_index )
 			if( suite_name ) then
 				.name = *suite_name
 			else
@@ -98,6 +183,8 @@ namespace fbcu
 			end if
 
 			.name_nocase = lcase(.name)
+
+			hash_add( strptr(.name_nocase), fbcu_suite_index )
 
 			.init_proc = init_proc
 			.term_proc = term_proc
@@ -110,8 +197,6 @@ namespace fbcu
 
 		end with
 
-		fbcu_suite_index = fbcu_suites_count
-		
 	end sub
 
 	''
@@ -149,16 +234,17 @@ namespace fbcu
 		end if
 			
 		fbcu_tests_count += 1
+		fbcu_test_index = fbcu_tests_count
 
 		with fbcu_suites( fbcu_suite_index )
 			.test_count += 1
 		end with
 
-		with fbcu_tests( fbcu_tests_count )
+		with fbcu_tests( fbcu_test_index )
 			if( test_name ) then
 				.name = *test_name
 			else
-				.name = "[test*" & fbcu_tests_count & "]"
+				.name = "[test*" & fbcu_test_index & "]"
 			end if
 
 			.test_proc = test_proc
@@ -171,13 +257,13 @@ namespace fbcu
 		end with
 
 		if( fbcu_suites( fbcu_suite_index ).test_index_head = INVALID_INDEX ) then
-			fbcu_suites( fbcu_suite_index ).test_index_head = fbcu_tests_count
+			fbcu_suites( fbcu_suite_index ).test_index_head = fbcu_test_index
 		else
-			fbcu_tests( fbcu_suites( fbcu_suite_index ).test_index_tail ).test_index_next = fbcu_tests_count
+			fbcu_tests( fbcu_suites( fbcu_suite_index ).test_index_tail ).test_index_next = fbcu_test_index
 		end if
-		fbcu_suites( fbcu_suite_index ).test_index_tail = fbcu_tests_count
+		fbcu_suites( fbcu_suite_index ).test_index_tail = fbcu_test_index
 		
-		fbcu_test_index = fbcu_tests_count
+		
 
 		if( is_global ) then
 			fbcu_suite_default_index = fbcu_suite_index

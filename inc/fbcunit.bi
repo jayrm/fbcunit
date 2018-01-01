@@ -126,6 +126,10 @@
 
 #endif '' ((FBCU_ENABLE_MACROS<>0) and (FBCU_ENABLE_CHECKS<>0))
 
+/'--------------------------
+| fbcunit assertion macros |
+--------------------------'/
+
 #ifndef FBCU_NULL
 #define FBCU_NULL 0
 #endif
@@ -256,7 +260,7 @@
 
 
 /'-----------------------
-  fbcunit helper macros
+| fbcunit helper macros |
 -----------------------'/
 
 #if (FBCU_ENABLE_MACROS<>0)
@@ -387,6 +391,11 @@
 
 #endif '' (FBCU_ENABLE_MACROS<>0)
 
+
+/'--------------------------
+| fbcunit api for -lang qb |
+--------------------------'/
+
 #if( __FB_LANG__ = "qb" )
 
 	declare function fbcu.find_suite alias "fbcu_find_suite_qb" _
@@ -439,7 +448,14 @@
 			byval msg as __zstring __ptr _
 		)
 
-#else
+#endif '' ( __FB_LANG__ = "qb" )
+
+
+/'----------------------------------
+| fbcunit api for -lang fb, fblite |
+----------------------------------'/
+
+#if( __FB_LANG__ <> "qb" )
 
 namespace fbcu
 
