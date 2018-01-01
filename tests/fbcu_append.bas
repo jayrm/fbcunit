@@ -1,4 +1,3 @@
-#define FBCU_ENABLE_TRACE 1
 #include once "fbcunit.bi"
 
 '' append multiple tests to a single suite
