@@ -1,21 +1,22 @@
 #ifndef __FBCUNIT_BI_INCLUDE__
 #define __FBCUNIT_BI_INCLUDE__ 1
 
-/'----------------------------------------------
-| fbcunit - FreeBASIC unit testing module      |
------------------------------------------------/
+/'---------------------------------------------------------
+| fbcunit - FreeBASIC unit testing module                 |
+----------------------------------------------------------/
 
-   )))                                   
-  ))   ))                           ))   ))
-  ))   ))                                ))
-)))))) )))))   ))))  ))  )) )))))  )))  ))))
-  ))   ))  )) ))  )) ))  )) )) )))  ))   ))
-  ))   ))  )) ))     ))  )) ))  ))  ))   ))
-  ))   ))  )) ))  )) ))  )) ))  ))  ))   ))
-  ))   )))))   ))))   ))))  ))  )) ))))   )))
+     XXX                                   
+    XX    XX                               XX    XX
+    XX    XX                                     XX
+  XXXXXX  XXXXX    XXXX   XX  XX  XXXXX   XXX   XXXX
+    XX    XX  XX  XX  XX  XX  XX  XX XXX   XX    XX
+    XX    XX  XX  XX      XX  XX  XX  XX   XX    XX
+    XX    XX  XX  XX  XX  XX  XX  XX  XX   XX    XX
+    XX    XXXXX    XXXX    XXXX   XX  XX  XXXX   XXX
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-----------------------------------------------'/
+/----------------------------------------------------------
+|                                                         |
+---------------------------------------------------------'/
 
 #define FBCU_VER_MAJOR 0
 #define FBCU_VER_MINOR 2
@@ -134,6 +135,15 @@
 #define FBCU_NULL 0
 #endif
 
+#if( __FB_LANG__ = "qb" )
+	#ifndef false
+		const false = 0
+	#endif
+	#ifndef true
+		const true = not false
+	#endif
+#endif
+
 #define CU_ASSERT( a )               fbcu.CU_ASSERT_( (a), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT(" #a ")" )
 #define CU_ASSERT_EQUAL( a, b )      fbcu.CU_ASSERT_( ((a)=(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_EQUAL(" #a "," #b ")" )
 #define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
@@ -162,9 +172,17 @@
 			FBCU_TRACE( "SUITE" suite_name )
 		#endmacro
 
-		#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
+		#macro END_SUITE_EMIT( suite_name )
 			sub suite_name##_ctor cdecl () __constructor
-				fbcu.add_suite( #suite_name, init_proc, exit_proc )
+				#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
+					fbcu.add_suite( #suite_name, __procptr(suite_name##.init), __procptr(suite_name##.cleanup) )
+				#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
+					fbcu.add_suite( #suite_name, __procptr(suite_name##.init), FBCU_NULL )
+				#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
+					fbcu.add_suite( #suite_name, FBCU_NULL, __procptr(suite_name##.cleanup) )
+				#else
+					fbcu.add_suite( #suite_name, FBCU_NULL, FBCU_NULL )
+				#endif
 			end sub
 			FBCU_TRACE( "END_SUITE" suite_name )
 		#endmacro
@@ -213,9 +231,17 @@
 			FBCU_TRACE( "SUITE" suite_name )
 		#endmacro
 
-		#macro END_SUITE_EMIT( suite_name, init_proc, exit_proc )
+		#macro END_SUITE_EMIT( suite_name )
 				sub suite_name##_ctor cdecl () constructor
-					fbcu.add_suite( #suite_name, init_proc, exit_proc )
+					#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
+						fbcu.add_suite( #suite_name, procptr(init), procptr(cleanup) )
+					#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
+						fbcu.add_suite( #suite_name, procptr(init), FBCU_NULL )
+					#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
+						fbcu.add_suite( #suite_name, FBCU_NULL, procptr(cleanup) )
+					#else
+						fbcu.add_suite( #suite_name, FBCU_NULL, FBCU_NULL )
+					#endif
 				end sub
 			end namespace
 			FBCU_TRACE( "END_SUITE" suite_name )
@@ -285,15 +311,7 @@
 	#endif
 
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
-		#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
-			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, procptr(init), procptr(cleanup) )
-		#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
-			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, procptr(init), FBCU_NULL )
-		#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
-			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, FBCU_NULL, procptr(cleanup) )
-		#else
-			END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, FBCU_NULL, FBCU_NULL )
-		#endif
+		END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME )
 	#else
 		#error FBCUNIT: mismatched "END_SUITE"
 	#endif

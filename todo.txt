@@ -1,5 +1,20 @@
 fbcunit TODO list:
 
+[ ] in the QB version, SUITE_INIT and SUITE_CLEANUP
+	need to set the function return value.  Consider
+	adsing a macro to set the value.
+
+	Current	work around is:
+
+	SUITE( somename )
+		SUITE_INIT
+			somename.init = true
+		END_SUITE_INIT
+		SUITE_CLEANUP
+			somename.cleanup = true
+		END_SUITE_CLEANUP
+	END_SUITE
+
 [X] group the tests by suite before running the list
 	of tests.  Currently the sequence is by test then
 	by suite creating NxM comparisons.

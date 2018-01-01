@@ -9,6 +9,7 @@ TEST_SRCS := tests/tests.bas
 TEST_SRCS += tests/fbcu_sanity.bas
 TEST_SRCS += tests/fbcu_multiple.bas
 TEST_SRCS += tests/fbcu_global.bas
+TEST_SRCS += tests/fbcu_many_tests.bas
 
 TEST_OBJS := $(patsubst %.bas,%.o,$(TEST_SRCS))
 
@@ -20,6 +21,7 @@ EXAMPLES += examples/ex03.exe
 EXAMPLES += examples/ex04.exe
 EXAMPLES += examples/ex05.exe
 EXAMPLES += examples/ex06.exe
+EXAMPLES += examples/ex07.exe
 
 FBCFLAGS += -g -exx -i ./inc
 
