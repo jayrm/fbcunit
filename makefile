@@ -10,6 +10,8 @@ TEST_SRCS += tests/fbcu_sanity.bas
 TEST_SRCS += tests/fbcu_multiple.bas
 TEST_SRCS += tests/fbcu_global.bas
 TEST_SRCS += tests/fbcu_many_tests.bas
+TEST_SRCS += tests/fbcu_append.bas
+TEST_SRCS += tests/fbcu_append2.bas
 
 TEST_OBJS := $(patsubst %.bas,%.o,$(TEST_SRCS))
 

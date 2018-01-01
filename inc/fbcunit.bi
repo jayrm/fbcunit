@@ -161,7 +161,7 @@
 #if (FBCU_ENABLE_MACROS<>0)
 
 	#if (FBCU_ENABLE_TRACE<>0)
-		#define FBCU_TRACE(msg_) #print FBCU_TRACE: msg_
+		#define FBCU_TRACE(msg_) #print FBCU TRACE: msg_
 	#else
 		#define FBCU_TRACE(msg_)
 	#endif
@@ -172,8 +172,8 @@
 			FBCU_TRACE( "SUITE" suite_name )
 		#endmacro
 
-		#macro END_SUITE_EMIT( suite_name )
-			sub suite_name##_ctor cdecl () __constructor
+		#macro END_SUITE_EMIT( suite_name, id )
+			sub suite_name##_ctor##id cdecl () __constructor
 				#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
 					fbcu.add_suite( #suite_name, __procptr(suite_name##.init), __procptr(suite_name##.cleanup) )
 				#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
@@ -231,8 +231,8 @@
 			FBCU_TRACE( "SUITE" suite_name )
 		#endmacro
 
-		#macro END_SUITE_EMIT( suite_name )
-				sub suite_name##_ctor cdecl () constructor
+		#macro END_SUITE_EMIT( suite_name, id )
+				sub suite_name##_ctor##id cdecl () constructor
 					#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
 						fbcu.add_suite( #suite_name, procptr(init), procptr(cleanup) )
 					#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
@@ -311,7 +311,7 @@
 	#endif
 
 	#if defined( TMP_FBCUNIT_SUITE_NAME )
-		END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME )
+		END_SUITE_EMIT( TMP_FBCUNIT_SUITE_NAME, __LINE__ )
 	#else
 		#error FBCUNIT: mismatched "END_SUITE"
 	#endif

@@ -149,8 +149,6 @@ namespace fbcu
 			function = INVALID_INDEX
 		end if
 
-		return INVALID_INDEX
-
 	end function
 
 	''

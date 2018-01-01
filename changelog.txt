@@ -9,6 +9,8 @@ Version 0.02
 - fbcunit.bi reorganized to separate helper macros and code emitters
 
 [fixed]
+- find_suite() has always returning INVALID_INDEX
+- unable to append tests to existing suite due to duplicate constructor names
 - lang qb: fix SUITE_INIT and SUITE_CLEANUP procptr() usage
 
 
