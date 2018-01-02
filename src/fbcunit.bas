@@ -1,5 +1,22 @@
 #include once "fbcunit.bi"
 
+/'---------------------------------------------------------
+| fbcunit - FreeBASIC unit testing module                 |
+----------------------------------------------------------/
+
+     XXX                                   
+    XX    XX                               XX    XX
+    XX    XX                                     XX
+  XXXXXX  XXXXX    XXXX   XX  XX  XXXXX   XXX   XXXX
+    XX    XX  XX  XX  XX  XX  XX  XX XXX   XX    XX
+    XX    XX  XX  XX      XX  XX  XX  XX   XX    XX
+    XX    XX  XX  XX  XX  XX  XX  XX  XX   XX    XX
+    XX    XXXXX    XXXX    XXXX   XX  XX  XXXX   XXX
+
+/----------------------------------------------------------
+|                                                         |
+---------------------------------------------------------'/
+
 '' FBCU_SUITE_COUNT_START is a compile time option that can
 '' set the starting size of the suite and test tables
 

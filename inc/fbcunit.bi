@@ -3,19 +3,6 @@
 
 /'---------------------------------------------------------
 | fbcunit - FreeBASIC unit testing module                 |
-----------------------------------------------------------/
-
-     XXX                                   
-    XX    XX                               XX    XX
-    XX    XX                                     XX
-  XXXXXX  XXXXX    XXXX   XX  XX  XXXXX   XXX   XXXX
-    XX    XX  XX  XX  XX  XX  XX  XX XXX   XX    XX
-    XX    XX  XX  XX      XX  XX  XX  XX   XX    XX
-    XX    XX  XX  XX  XX  XX  XX  XX  XX   XX    XX
-    XX    XXXXX    XXXX    XXXX   XX  XX  XXXX   XXX
-
-/----------------------------------------------------------
-|                                                         |
 ---------------------------------------------------------'/
 
 #define FBCU_VER_MAJOR 0
