@@ -16,11 +16,11 @@ const false = 0, true = not false
 SUITE( qb_example )
 
 	SUITE_INIT
-		qb_example.init = true
+		tests.qb_example.init = true
 	END_SUITE_INIT
 
 	SUITE_CLEANUP
-		qb_example.cleanup = true
+		tests.qb_example.cleanup = true
 	END_SUITE_CLEANUP
 
 	TEST( always_true )

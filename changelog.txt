@@ -12,6 +12,8 @@ Version 0.02
 - find_suite() has always returning INVALID_INDEX
 - unable to append tests to existing suite due to duplicate constructor names
 - lang qb: fix SUITE_INIT and SUITE_CLEANUP procptr() usage
+- make constructors private to avoid name collisions
+- lang qb: fix pseudo namespace "tests"
 
 
 Version 0.01

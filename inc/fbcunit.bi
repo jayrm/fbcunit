@@ -173,13 +173,13 @@
 		#endmacro
 
 		#macro END_SUITE_EMIT( suite_name, id )
-			sub suite_name##_ctor##id cdecl () __constructor
+			__private sub tests.##suite_name##_ctor##id cdecl () __constructor
 				#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
-					fbcu.add_suite( #suite_name, __procptr(suite_name##.init), __procptr(suite_name##.cleanup) )
+					fbcu.add_suite( #suite_name, __procptr(tests.##suite_name##.init), __procptr(tests.##suite_name##.cleanup) )
 				#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
-					fbcu.add_suite( #suite_name, __procptr(suite_name##.init), FBCU_NULL )
+					fbcu.add_suite( #suite_name, __procptr(tests.##suite_name##.init), FBCU_NULL )
 				#elseif defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP )
-					fbcu.add_suite( #suite_name, FBCU_NULL, __procptr(suite_name##.cleanup) )
+					fbcu.add_suite( #suite_name, FBCU_NULL, __procptr(tests.##suite_name##.cleanup) )
 				#else
 					fbcu.add_suite( #suite_name, FBCU_NULL, FBCU_NULL )
 				#endif
@@ -188,7 +188,7 @@
 		#endmacro
 
 		#macro SUITE_INIT_EMIT( suite_name )
-			function suite_name##.init cdecl () as long
+			function tests.##suite_name##.init cdecl () as long
 			FBCU_TRACE( "SUITE_INIT" )
 		#endmacro
 
@@ -198,7 +198,7 @@
 		#endmacro
 
 		#macro SUITE_CLEANUP_EMIT( suite_name )
-			function suite_name##.cleanup cdecl () as long
+			function tests.##suite_name##.cleanup cdecl () as long
 			FBCU_TRACE( "SUITE_CLEANUP" )
 		#endmacro
 
@@ -207,19 +207,15 @@
 			FBCU_TRACE( "END_SUITE_CLEANUP" )
 		#endmacro
 
-		#macro TEST_EMIT( test_name )
-			#if defined(TMP_FBCUNIT_SUITE_NAME)
-				sub TMP_FBCUNIT_SUITE_NAME##.test_name cdecl ()
-			#else
-				sub fbcu_global.test_name cdecl ()
-			#endif
-			FBCU_TRACE( "TEST" test_name )
+		#macro TEST_EMIT( suite_name, test_name )
+			sub tests.##suite_name##.##test_name cdecl ()
+			FBCU_TRACE( "TEST" tests.fbcu_global.##test_name )
 		#endmacro
 
 		#macro END_TEST_EMIT( suite_name, test_name, global )
 			end sub
-			sub suite_name##.##test_name##.ctor cdecl () __constructor
-				fbcu.add_test( #test_name, @suite_name##.##test_name, global )
+			__private sub tests.##suite_name##.##test_name##_ctor cdecl () __constructor
+				fbcu.add_test( #test_name, __procptr(tests.##suite_name##.##test_name), global )
 			end sub
 			FBCU_TRACE( "END_TEST" test_name )
 		#endmacro
@@ -232,7 +228,7 @@
 		#endmacro
 
 		#macro END_SUITE_EMIT( suite_name, id )
-				sub suite_name##_ctor##id cdecl () constructor
+				private sub suite_name##_ctor##id cdecl () constructor
 					#if (defined( TMP_FBCUNIT_SUITE_HAVE_INIT ) andalso defined( TMP_FBCUNIT_SUITE_HAVE_CLEANUP ))
 						fbcu.add_suite( #suite_name, procptr(init), procptr(cleanup) )
 					#elseif defined( TMP_FBCUNIT_SUITE_HAVE_INIT )
@@ -267,15 +263,15 @@
 			FBCU_TRACE( "END_SUITE_CLEANUP" )
 		#endmacro
 
-		#macro TEST_EMIT( test_name )
+		#macro TEST_EMIT( suite_name, test_name )
 				sub test_name cdecl ()
 			FBCU_TRACE( "TEST" test_name )
 		#endmacro
 
 		#macro END_TEST_EMIT( suite_name, test_name, global )
 				end sub
-				sub test_name##_ctor cdecl () constructor
-					fbcu.add_test( #test_name, @test_name, global )
+				private sub test_name##_ctor cdecl () constructor
+					fbcu.add_test( #test_name, procptr(test_name), global )
 				end sub
 			FBCU_TRACE( "END_TEST" test_name )
 		#endmacro
@@ -391,7 +387,12 @@
 		#error FBCUNIT: missing "END_SUITE_CLEANUP" before "TEST"
 	#endif
 	#define TMP_FBCUNIT_TEST_NAME test_name
-    TEST_EMIT( test_name )
+	#if defined( TMP_FBCUNIT_SUITE_NAME )
+		TEST_EMIT( TMP_FBCUNIT_SUITE_NAME, TMP_FBCUNIT_TEST_NAME )
+	#else
+		TEST_EMIT( fbcu_global, TMP_FBCUNIT_TEST_NAME )
+	#endif
+    
 #endmacro
 
 #macro END_TEST
