@@ -2,6 +2,7 @@ Version 0.03
 
 [added]
 - CU_ASSERT_DOUBLE_EQUAL() macro added - it is needed for fbc compiler test suite
+- fbcu.check_internal_state() performs checks on the internal data
 
 [fixed]
 - hash table look up for suite names was failing when index was 0 (zero)

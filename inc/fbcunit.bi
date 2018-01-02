@@ -152,7 +152,7 @@
 #define CU_FAIL( a )                 fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
 #define CU_FAIL_FATAL( a )           fbcu.CU_ASSERT_FATAL_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL_FATAL(" #a ")" )
 #define CU_PASS( a )                 fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
-#define CU_ASSERT_DOUBLE_EQUAL( a, e, g ) fbcu.CU_ASSERT_( (abs(cdbl(a)-cdbl(e)) < abs(g)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_DOUBLE_EQUAL(" #a "," #e "," #g ")" )
+#define CU_ASSERT_DOUBLE_EQUAL( a, e, g ) fbcu.CU_ASSERT_( (abs(cdbl(a)-cdbl(e)) < cdbl(g)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_DOUBLE_EQUAL(" #a "," #e "," #g ")" )
 
 
 /'-----------------------------
@@ -441,6 +441,10 @@
 			byval is_global as __boolean = __false _
 		)
 
+	declare function fbcu.check_internal_state alias "fbcu_check_internal_state_qb" _
+		( _
+		) as __boolean
+	
 	declare sub fbcu.run_tests alias "fbcu_run_tests_qb" _
 		( _
 			byval show_summary as __boolean = __true _
@@ -501,6 +505,10 @@ namespace fbcu
 			byval test_proc as sub cdecl ( ) = FBCU_NULL, _
 			byval is_global as boolean = false _
 		)
+
+	declare function check_internal_state _
+		( _
+		) as boolean
 
 	declare sub run_tests _
 		( _

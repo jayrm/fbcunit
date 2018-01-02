@@ -278,6 +278,80 @@ namespace fbcu
 	end function
 
 	''
+	function check_internal_state _
+		( _
+		) as boolean
+
+		dim bFail as boolean = false
+
+		const msg_prefix = "FBCUNIT CHECK_INTERNAL_STATE: "
+
+		if(( fbcu_suites_count = 0 ) andalso ( fbcu_tests_count = 0 )) then
+			'' no suites or tests
+			return true
+		end if
+
+		'' verify that suites have valid hash table entries
+		if( fbcu_suites_count > 0 ) then
+
+			'' test that every suite has a valid hash table entry
+
+			for suite_index as integer = 1 to fbcu_suites_count
+				dim index as integer = hash_find( strptr( fbcu_suites(suite_index).name_nocase ) )
+				if( index <> INVALID_HASH_INDEX ) then
+					if( hash(index) = INVALID_INDEX ) then
+						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not have hash table entry"
+						bFail = true
+					elseif( hash(index) <> suite_index ) then
+						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not match hash table entry"
+						bFail = true
+					end if
+				end if
+			next
+
+		end if
+
+		'' verify that every test is reachable by following the singly linked lists
+		if( fbcu_tests_count > 0 ) then
+
+			dim test_suite_index(1 to fbcu_tests_count) as integer
+			for fbcu_tests_count as integer = 1 to fbcu_tests_count
+				test_suite_index(fbcu_tests_count) = INVALID_INDEX
+			next
+
+			for suite_index as integer = 1 to fbcu_suites_count
+
+				dim test_index as integer = fbcu_suites( suite_index ).test_index_head
+
+				while( test_index <> INVALID_INDEX )
+
+					'' already linked?
+					if( test_suite_index( test_index ) <> INVALID_INDEX ) then
+						print msg_prefix & "test " & fbcu_suites(suite_index).name & "." & fbcu_tests(test_index).name & " is duplicated"
+						bFail = true
+					end if
+
+					test_suite_index( test_index ) = suite_index
+					test_index = fbcu_tests( test_index ).test_index_next
+				wend
+
+			next
+
+			'' no link at all?
+			for test_index as integer = 1 to fbcu_tests_count
+				if( test_suite_index( test_index ) = INVALID_INDEX ) then
+					print msg_prefix & "test " & fbcu_tests(test_index).name & " not reachable"
+					bFail = true
+				end if
+			next
+
+		end if
+
+		function = not bFail
+
+	end function
+
+	''
 	sub run_tests _
 		( _
 			byval show_summary as boolean = true _
