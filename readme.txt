@@ -1,4 +1,4 @@
-fbcunit version 0.2
+fbcunit version 0.3
 -------------------
 	Unit testing component for fbc compiler.  Provides macros 
 	and common code for unit testing fbc compiled sources. 

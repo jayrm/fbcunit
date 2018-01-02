@@ -108,7 +108,7 @@ end function
 '' returns index in to hash()
 private function hash_add ( byval s as const zstring ptr, byval suite_index as const integer ) as integer
 	dim index as integer = hash_find( s )
-	if( index ) then
+	if( index <> INVALID_HASH_INDEX ) then
 		if( hash(index) = INVALID_INDEX ) then
 			hash(index) = suite_index
 			hash_count += 1
@@ -143,7 +143,7 @@ namespace fbcu
 		dim s as string = lcase( *suite_name )
 
 		dim index as integer = hash_find(strptr(s))
-		if( index ) then
+		if( index <> INVALID_HASH_INDEX ) then
 			function = hash(index)
 		else
 			function = INVALID_INDEX
@@ -260,8 +260,6 @@ namespace fbcu
 			fbcu_tests( fbcu_suites( fbcu_suite_index ).test_index_tail ).test_index_next = fbcu_test_index
 		end if
 		fbcu_suites( fbcu_suite_index ).test_index_tail = fbcu_test_index
-		
-		
 
 		if( is_global ) then
 			fbcu_suite_default_index = fbcu_suite_index

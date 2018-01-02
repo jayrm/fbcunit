@@ -19,7 +19,7 @@
 ---------------------------------------------------------'/
 
 #define FBCU_VER_MAJOR 0
-#define FBCU_VER_MINOR 2
+#define FBCU_VER_MINOR 3
 
 #inclib "fbcunit"
 
@@ -149,9 +149,10 @@
 #define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
 #define CU_ASSERT_TRUE( a )          fbcu.CU_ASSERT_( (a)=true, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_TRUE(" #a ")" )
 #define CU_ASSERT_FALSE( a )         fbcu.CU_ASSERT_( (a)=false, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_FALSE(" #a ")" )
-#define CU_FAIL( msg )               fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
+#define CU_FAIL( a )                 fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
 #define CU_FAIL_FATAL( a )           fbcu.CU_ASSERT_FATAL_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL_FATAL(" #a ")" )
-#define CU_PASS( msg )               fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
+#define CU_PASS( a )                 fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
+#define CU_ASSERT_DOUBLE_EQUAL( a, e, g ) fbcu.CU_ASSERT_( (abs(cdbl(a)-cdbl(e)) < abs(g)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_DOUBLE_EQUAL(" #a "," #e "," #g ")" )
 
 
 /'-----------------------------

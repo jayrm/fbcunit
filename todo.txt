@@ -1,10 +1,22 @@
-fbcunit TODO list:
+fbcunit TODO/BUG list:
 
-[ ] in the QB version, SUITE_INIT and SUITE_CLEANUP
-	need to set the function return value.  Consider
-	adsing a macro to set the value.
+[ ] add alternate console logger - when used with 
+	fbc compiler test suite, fbcunit's PRINT doesn't
+	write to console after graphics tests
 
-	Current	work around is:
+[ ] add exit code for run_tests or provide a means to 
+	query the number of failed tests	
+
+[ ] add unit tests (for fbcunit itself) for all CU_* macros
+
+[ ] add a verbose mode selector - when used with
+	fbc compiler test suite, it is really just too much
+	printed for regular runs.
+
+[ ] SUITE_INIT and SUITE_CLEANUP need to set the function 
+	return value.  Consider	adding a macro to set the value.
+
+	Current	work around for qb is:
 
 	SUITE( somename )
 		SUITE_INIT
@@ -12,6 +24,18 @@ fbcunit TODO list:
 		END_SUITE_INIT
 		SUITE_CLEANUP
 			somename.cleanup = true
+		END_SUITE_CLEANUP
+	END_SUITE
+
+
+	Current	work around for fb, fblite is:
+
+	SUITE( somename )
+		SUITE_INIT
+			function = true
+		END_SUITE_INIT
+		SUITE_CLEANUP
+			function = true
 		END_SUITE_CLEANUP
 	END_SUITE
 

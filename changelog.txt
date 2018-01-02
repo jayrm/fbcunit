@@ -1,9 +1,21 @@
+Version 0.03
+
+[added]
+- CU_ASSERT_DOUBLE_EQUAL() macro added - it is needed for fbc compiler test suite
+
+[fixed]
+- hash table look up for suite names was failing when index was 0 (zero)
+- CU_PASS() definition was incorrect
+- CU_FAIL() definition was incorrect
+
+
 Version 0.02
 
 [added]
 - dual api for using fbcunit in -lang qb
 - internal: use a singly linked lists to run tests for each test
 - internal: use a hash for suite name lookups
+- SUITE_INIT & SUITE_EXIT macros
 
 [changed]
 - fbcunit.bi reorganized to separate helper macros and code emitters
@@ -11,7 +23,6 @@ Version 0.02
 [fixed]
 - find_suite() has always returning INVALID_INDEX
 - unable to append tests to existing suite due to duplicate constructor names
-- lang qb: fix SUITE_INIT and SUITE_CLEANUP procptr() usage
 - make constructors private to avoid name collisions
 - lang qb: fix pseudo namespace "tests"
 
