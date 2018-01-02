@@ -354,20 +354,25 @@ namespace fbcu
 	''
 	sub run_tests _
 		( _
-			byval show_summary as boolean = true _
+			byval show_summary as boolean = true, _
+			byval verbose as boolean = false _
 		)
 
-		print "--------------------------------------------------------------------------------"
-		print date & " " & time
-		print
-		print "TESTS"
-		print
+		if( verbose ) then
+			print "--------------------------------------------------------------------------------"
+			print date & " " & time
+			print
+			print "TESTS"
+			print
+		end if
 
 		for fbcu_suite_index = 1 to fbcu_suites_count
 
 			with fbcu_suites( fbcu_suite_index )
 
-				print "  "; .name
+				if( verbose ) then
+					print "  "; .name
+				end if
 
 				.assert_count = 0
 				.pass_count = 0
@@ -388,7 +393,9 @@ namespace fbcu
 					with fbcu_tests( fbcu_test_index )
 						if( .suite_index = fbcu_suite_index ) then
 
-							print "    "; .name
+							if( verbose ) then
+								print "    "; .name
+							end if
 
 							if( .test_proc ) then
 								.test_proc()

@@ -9,9 +9,9 @@ fbcunit TODO/BUG list:
 
 [ ] add unit tests (for fbcunit itself) for all CU_* macros
 
-[ ] add a verbose mode selector - when used with
-	fbc compiler test suite, it is really just too much
-	printed for regular runs.
+[ ] handle success/failure of suite init & cleanup procs
+	if the init proc fails, shouldn't run the tests for that
+	suite.
 
 [ ] SUITE_INIT and SUITE_CLEANUP need to set the function 
 	return value.  Consider	adding a macro to set the value.
@@ -38,6 +38,10 @@ fbcunit TODO/BUG list:
 			function = true
 		END_SUITE_CLEANUP
 	END_SUITE
+
+[X] add a verbose mode selector - when used with
+	fbc compiler test suite, it is really just too much
+	printed for regular runs.
 
 [X] group the tests by suite before running the list
 	of tests.  Currently the sequence is by test then

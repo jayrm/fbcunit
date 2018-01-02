@@ -46,7 +46,7 @@ $(LIBRARY): $(SRCS) $(HDRS)
 tests/%.o: tests/%.bas $(HDRS)
 	$(FBC) $(FBCFLAGS) -m tests -c $< -o $@
 
-examples/%.exe: examples/%.bas $(LIBRARY)
+examples/%.exe: examples/%.bas $(HDRS) $(LIBRARY)
 	$(FBC) $(FBCFLAGS) $< -p ./lib -x $@
 
 $(TEST_EXE): $(TEST_OBJS) $(LIBRARY)

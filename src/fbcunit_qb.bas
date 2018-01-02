@@ -51,10 +51,11 @@ end sub
 ''
 sub fbcu_run_tests_qb alias "fbcu_run_tests_qb" _
 	( _
-		byval show_summary as boolean = true _
+		byval show_summary as boolean = true, _
+		byval verbose as boolean = false _
 	)
 
-	fbcu.run_tests( show_summary )
+	fbcu.run_tests( show_summary, verbose )
 
 end sub
 

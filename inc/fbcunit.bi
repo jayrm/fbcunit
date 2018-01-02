@@ -447,7 +447,8 @@
 	
 	declare sub fbcu.run_tests alias "fbcu_run_tests_qb" _
 		( _
-			byval show_summary as __boolean = __true _
+			byval show_summary as __boolean = __true, _
+			byval verbose as __boolean = __false _
 		)
 
 	declare sub fbcu.show_results alias "fbcu_show_results_qb" _
@@ -512,7 +513,8 @@ namespace fbcu
 
 	declare sub run_tests _
 		( _
-			byval show_summary as boolean = true _
+			byval show_summary as boolean = true, _
+			byval verbose as boolean = false _
 		)
 
 	declare sub show_results _
