@@ -3,16 +3,19 @@ Version 0.03
 [added]
 - CU_ASSERT_DOUBLE_EQUAL() macro added - it is needed for fbc compiler test suite
 - fbcu.check_internal_state() performs checks on the internal data
+- alternate console logger [WIP]
 
 [changed]
 - run_tests() now takes a verbose parameter
 - run_tests() returns true=success, false=fail
 - run_tests() checks return values from SUITE_INIT and SUITE_CLEANUP and reports failures
+- CU_ASSERT_() now takes boolean data type as value argument (was long)
 
 [fixed]
 - hash table look up for suite names was failing when index was 0 (zero)
 - CU_PASS() definition was incorrect
 - CU_FAIL() definition was incorrect
+- CU_ASSERT_TRUE() was comparing "=true" and needs to compare "<>false"
 
 
 Version 0.02

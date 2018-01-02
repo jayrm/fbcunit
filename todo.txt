@@ -1,12 +1,20 @@
 fbcunit TODO/BUG list:
 
-[ ] add alternate console logger - when used with 
-	fbc compiler test suite, fbcunit's PRINT doesn't
-	write to console after graphics tests
-
 [ ] add unit tests (for fbcunit itself) for all CU_* macros
 
-[ ] SUITE_INIT and SUITE_CLEANUP need to set the function 
+[ ] for compatibility with existing fbc compiler suite,
+	can't check the return value of init & cleanup code
+	because fbc test suite doesn't set it.
+
+	1) remove the check, and let user decide how to deal with
+		failed init & cleanup code - i.e. CU_ASSERT_FATAL( false )
+
+	OR 2) default to success and let user set a FAIL flag
+
+	OR 3) update fbc test suites
+
+	For either #2 or #3 still todo:
+	SUITE_INIT and SUITE_CLEANUP need to set the function 
 	return value.  Consider	adding a macro to set the value.
 
 	Current	work around for qb is:
@@ -31,6 +39,10 @@ fbcunit TODO/BUG list:
 			function = true
 		END_SUITE_CLEANUP
 	END_SUITE
+
+[X] add alternate console logger - when used with 
+	fbc compiler test suite, fbcunit's PRINT doesn't
+	write to console after graphics tests
 
 [X] handle success/failure of suite init & cleanup procs
 	if the init proc fails, shouldn't run the tests for that

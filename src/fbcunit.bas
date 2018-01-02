@@ -70,6 +70,18 @@ dim shared fbcu_suite_index as integer = INVALID_INDEX
 dim shared fbcu_test_index as integer = INVALID_INDEX
 
 '' --------------------
+'' console output
+'' --------------------
+
+private sub print_output( byref s as const string = "" )
+
+	open cons for output as #255
+	print #255, s
+	close #255
+
+end sub
+
+'' --------------------
 '' hash for suite names
 '' --------------------
 
@@ -317,10 +329,10 @@ namespace fbcu
 				dim index as integer = hash_find( strptr( fbcu_suites(suite_index).name_nocase ) )
 				if( index <> INVALID_HASH_INDEX ) then
 					if( hash(index) = INVALID_INDEX ) then
-						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not have hash table entry"
+						print_output( msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not have hash table entry" )
 						failed = true
 					elseif( hash(index) <> suite_index ) then
-						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not match hash table entry"
+						print_output( msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not match hash table entry" )
 						failed = true
 					end if
 				end if
@@ -344,7 +356,7 @@ namespace fbcu
 
 					'' already linked?
 					if( test_suite_index( test_index ) <> INVALID_INDEX ) then
-						print msg_prefix & "test " & fbcu_suites(suite_index).name & "." & fbcu_tests(test_index).name & " is duplicated"
+						print_output( msg_prefix & "test " & fbcu_suites(suite_index).name & "." & fbcu_tests(test_index).name & " is duplicated" )
 						failed = true
 					end if
 
@@ -357,7 +369,7 @@ namespace fbcu
 			'' no link at all?
 			for test_index as integer = 1 to fbcu_tests_count
 				if( test_suite_index( test_index ) = INVALID_INDEX ) then
-					print msg_prefix & "test " & fbcu_tests(test_index).name & " not reachable"
+					print_output( msg_prefix & "test " & fbcu_tests(test_index).name & " not reachable" )
 					failed = true
 				end if
 			next
@@ -380,11 +392,11 @@ namespace fbcu
 		function = false
 
 		if( verbose ) then
-			print "--------------------------------------------------------------------------------"
-			print date & " " & time
-			print
-			print "TESTS"
-			print
+			print_output( string( 78, "-" ) )
+			print_output( date() & " " & time() )
+			print_output( )
+			print_output( "TESTS" )
+			print_output( )
 		end if
 
 		for fbcu_suite_index = 1 to fbcu_suites_count
@@ -394,7 +406,7 @@ namespace fbcu
 			with fbcu_suites( fbcu_suite_index )
 
 				if( verbose ) then
-					print "  "; .name
+					print_output( "  " & .name )
 				end if
 
 				.assert_count = 0
@@ -405,8 +417,14 @@ namespace fbcu
 					if( .init_proc() ) then
 						dotests = true
 					else
-						print "      " & .name & " init procedure failed"
+#if true
+						'' !!! fbc compiler test suite hack
+						'' current test suite does not set return value for init procs
+						dotests = true
+#else
+						print_output( "      " & .name & " init procedure failed" )
 						failed = true
+#endif
 					end if
 				else
 					dotests = true
@@ -422,7 +440,7 @@ namespace fbcu
 							if( .suite_index = fbcu_suite_index ) then
 
 								if( verbose ) then
-									print "    "; .name
+									print_output( "    " & .name )
 								end if
 
 								if( .test_proc ) then
@@ -442,8 +460,12 @@ namespace fbcu
 
 				if( .term_proc ) then
 					if( .term_proc() = false ) then
-						print "      " & .name & " cleanup procedure failed"
+#if false
+						'' !!! fbc compiler test suite hack
+						'' current test suite does not set return value for cleanup procs
+						print_output( "      " & .name & " cleanup procedure failed" )
 						failed = true
+#endif
 					end if
 				end if
 			end with
@@ -469,11 +491,11 @@ namespace fbcu
 		dim t_test_count as integer = 0
 		dim x as string = ""
 
-		print
-		print "SUMMARY"
-		print
-		print " Asserts    Passed    Failed  Suite                                        Tests" 
-		print "--------  --------  --------  ----------------------------------------  --------"
+		print_output( )
+		print_output( "SUMMARY" )
+		print_output( )
+		print_output( " Asserts    Passed    Failed  Suite                                      Tests" )
+		print_output( "--------  --------  --------  --------------------------------------  --------" )
 
 		for fbcu_suite_index as integer = 1 to fbcu_suites_count
 
@@ -491,17 +513,17 @@ namespace fbcu
 				x &= "  "
 				x &= rjust( "" & .fail_count, 8 )
 				x &= "  "
-				x &= ljust( "" & .name, 40 )
+				x &= ljust( "" & .name, 38 )
 				x &= "  "
 				x &= rjust( "" & .test_count, 8 )
 
-				print x
+				print_output( x )
 
 			end with
 
 		next 
 
-		print "--------  --------  --------  ----------------------------------------  --------"
+		print_output( "--------  --------  --------  --------------------------------------  --------" )
 
 		x = ""
 		x &= rjust( "" & t_assert_count, 8 )
@@ -510,19 +532,19 @@ namespace fbcu
 		x &= "  "
 		x &= rjust( "" & t_fail_count, 8 )
 		x &= "  "
-		x &= ljust( "Total", 40 )
+		x &= ljust( "Total", 38 )
 		x &= "  "
 		x &= rjust( "" & t_test_count, 8 )
 
-		print x
-		print
+		print_output( x )
+		print_output( )
 
 	end sub
 
 	''
 	sub CU_ASSERT_ _
 		( _
-			byval value as long, _
+			byval value as boolean, _
 			byval fil as zstring ptr, _
 			byval lin as long, _
 			byval fun as zstring ptr, _
@@ -554,7 +576,7 @@ namespace fbcu
 			'' increment fail for current suite
 			fbcu_suites( fbcu_suite_index ).fail_count += 1
 			fbcu_tests( fbcu_test_index ).fail_count += 1
-			print "      "; *fil & "(" & lin & ") : error : " & *fun & " " & *msg
+			print_output( "      " & *fil & "(" & lin & ") : error : " & *fun & " " & *msg )
 
 		end if
 
@@ -563,7 +585,7 @@ namespace fbcu
 	''
 	sub CU_ASSERT_FATAL_ _
 		( _
-			byval value as long, _
+			byval value as boolean, _
 			byval fil as zstring ptr, _
 			byval lin as long, _
 			byval fun as zstring ptr, _

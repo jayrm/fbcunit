@@ -134,12 +134,12 @@
 #define CU_ASSERT( a )               fbcu.CU_ASSERT_( (a), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT(" #a ")" )
 #define CU_ASSERT_EQUAL( a, b )      fbcu.CU_ASSERT_( ((a)=(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_EQUAL(" #a "," #b ")" )
 #define CU_ASSERT_NOT_EQUAL( a, b )  fbcu.CU_ASSERT_( ((a)<>(b)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_NOT_EQUAL(" #a "," #b ")" )
-#define CU_ASSERT_TRUE( a )          fbcu.CU_ASSERT_( (a)=true, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_TRUE(" #a ")" )
+#define CU_ASSERT_TRUE( a )          fbcu.CU_ASSERT_( (a)<>false, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_TRUE(" #a ")" )
 #define CU_ASSERT_FALSE( a )         fbcu.CU_ASSERT_( (a)=false, __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_FALSE(" #a ")" )
 #define CU_FAIL( a )                 fbcu.CU_ASSERT_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL(" #a ")" )
 #define CU_FAIL_FATAL( a )           fbcu.CU_ASSERT_FATAL_( false, __FILE__, __LINE__, __FUNCTION__, "CU_FAIL_FATAL(" #a ")" )
 #define CU_PASS( a )                 fbcu.CU_ASSERT_( true , __FILE__, __LINE__, __FUNCTION__, "CU_PASS(" #a ")" )
-#define CU_ASSERT_DOUBLE_EQUAL( a, e, g ) fbcu.CU_ASSERT_( (abs(cdbl(a)-cdbl(e)) < cdbl(g)), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_DOUBLE_EQUAL(" #a "," #e "," #g ")" )
+#define CU_ASSERT_DOUBLE_EQUAL( a, e, g ) fbcu.CU_ASSERT_( (abs(cdbl(a)-cdbl(e)) <= abs(cdbl(g))), __FILE__, __LINE__, __FUNCTION__, "CU_ASSERT_DOUBLE_EQUAL(" #a "," #e "," #g ")" )
 
 
 /'-----------------------------
@@ -444,7 +444,7 @@
 
 	declare sub fbcu.CU_ASSERT_ alias "fbcu_CU_ASSERT_qb_" _
 		( _
-			byval value as long, _
+			byval value as __boolean, _
 			byval fil as __zstring __ptr, _
 			byval lin as long, _
 			byval fun as __zstring __ptr, _
@@ -453,7 +453,7 @@
 
 	declare sub fbcu.CU_ASSERT_FATAL_ alias "fbcu_CU_ASSERT_FATAL_qb_" _
 		( _
-			byval value as long, _
+			byval value as __boolean, _
 			byval fil as __zstring __ptr, _
 			byval lin as long, _
 			byval fun as __zstring __ptr, _
@@ -510,7 +510,7 @@ namespace fbcu
 
 	declare sub CU_ASSERT_ _
 		( _
-			byval value as long, _
+			byval value as boolean, _
 			byval fil as zstring ptr, _
 			byval lin as long, _
 			byval fun as zstring ptr, _
@@ -519,7 +519,7 @@ namespace fbcu
 
 	declare sub CU_ASSERT_FATAL_ _
 		( _
-			byval value as long, _
+			byval value as boolean, _
 			byval fil as zstring ptr, _
 			byval lin as long, _
 			byval fun as zstring ptr, _

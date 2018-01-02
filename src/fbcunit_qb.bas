@@ -71,7 +71,7 @@ end sub
 ''
 sub fbcu_CU_ASSERT_qb_ alias "fbcu_CU_ASSERT_qb_" _
 	( _
-		byval value as long, _
+		byval value as boolean, _
 		byval fil as zstring ptr, _
 		byval lin as long, _
 		byval fun as zstring ptr, _
@@ -85,7 +85,7 @@ end sub
 ''
 sub fbcu_CU_ASSERT_FATAL_qb_ alias "fbcu_CU_ASSERT_FATAL_qb_" _
 	( _
-		byval value as long, _
+		byval value as boolean, _
 		byval fil as zstring ptr, _
 		byval lin as long, _
 		byval fun as zstring ptr, _
