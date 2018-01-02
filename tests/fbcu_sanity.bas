@@ -6,6 +6,8 @@ SUITE( fbcunit )
 	
 		'' check some basic functions of the FBCU component
 
+		CU_ASSERT_TRUE( fbcu.check_internal_state() )
+
 		CU_ASSERT( true )
 
 		CU_ASSERT_EQUAL( true, true )

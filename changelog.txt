@@ -6,6 +6,8 @@ Version 0.03
 
 [changed]
 - run_tests() now takes a verbose parameter
+- run_tests() returns true=success, false=fail
+- run_tests() checks return values from SUITE_INIT and SUITE_CLEANUP and reports failures
 
 [fixed]
 - hash table look up for suite names was failing when index was 0 (zero)

@@ -4,14 +4,7 @@ fbcunit TODO/BUG list:
 	fbc compiler test suite, fbcunit's PRINT doesn't
 	write to console after graphics tests
 
-[ ] add exit code for run_tests or provide a means to 
-	query the number of failed tests	
-
 [ ] add unit tests (for fbcunit itself) for all CU_* macros
-
-[ ] handle success/failure of suite init & cleanup procs
-	if the init proc fails, shouldn't run the tests for that
-	suite.
 
 [ ] SUITE_INIT and SUITE_CLEANUP need to set the function 
 	return value.  Consider	adding a macro to set the value.
@@ -38,6 +31,13 @@ fbcunit TODO/BUG list:
 			function = true
 		END_SUITE_CLEANUP
 	END_SUITE
+
+[X] handle success/failure of suite init & cleanup procs
+	if the init proc fails, shouldn't run the tests for that
+	suite.
+
+[X] add exit code for run_tests to determine success
+	or failure
 
 [X] add a verbose mode selector - when used with
 	fbc compiler test suite, it is really just too much

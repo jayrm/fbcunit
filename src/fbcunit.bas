@@ -282,7 +282,7 @@ namespace fbcu
 		( _
 		) as boolean
 
-		dim bFail as boolean = false
+		dim failed as boolean = false
 
 		const msg_prefix = "FBCUNIT CHECK_INTERNAL_STATE: "
 
@@ -301,10 +301,10 @@ namespace fbcu
 				if( index <> INVALID_HASH_INDEX ) then
 					if( hash(index) = INVALID_INDEX ) then
 						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not have hash table entry"
-						bFail = true
+						failed = true
 					elseif( hash(index) <> suite_index ) then
 						print msg_prefix & "suite entry '" & fbcu_suites(suite_index).name & "' does not match hash table entry"
-						bFail = true
+						failed = true
 					end if
 				end if
 			next
@@ -328,7 +328,7 @@ namespace fbcu
 					'' already linked?
 					if( test_suite_index( test_index ) <> INVALID_INDEX ) then
 						print msg_prefix & "test " & fbcu_suites(suite_index).name & "." & fbcu_tests(test_index).name & " is duplicated"
-						bFail = true
+						failed = true
 					end if
 
 					test_suite_index( test_index ) = suite_index
@@ -341,22 +341,26 @@ namespace fbcu
 			for test_index as integer = 1 to fbcu_tests_count
 				if( test_suite_index( test_index ) = INVALID_INDEX ) then
 					print msg_prefix & "test " & fbcu_tests(test_index).name & " not reachable"
-					bFail = true
+					failed = true
 				end if
 			next
 
 		end if
 
-		function = not bFail
+		function = not failed
 
 	end function
 
 	''
-	sub run_tests _
+	function run_tests _
 		( _
 			byval show_summary as boolean = true, _
 			byval verbose as boolean = false _
-		)
+		) as boolean
+
+		dim failed as boolean = false
+
+		function = false
 
 		if( verbose ) then
 			print "--------------------------------------------------------------------------------"
@@ -367,6 +371,8 @@ namespace fbcu
 		end if
 
 		for fbcu_suite_index = 1 to fbcu_suites_count
+
+			dim dotests as boolean = false
 
 			with fbcu_suites( fbcu_suite_index )
 
@@ -380,46 +386,60 @@ namespace fbcu
 
 				if( .init_proc ) then
 					if( .init_proc() ) then
-						'' !!! record success
+						dotests = true
 					else
-						'' !!! record failure
+						print "      " & .name & " init procedure failed"
+						failed = true
 					end if
+				else
+					dotests = true
 				end if
 
-				fbcu_test_index = .test_index_head
+				if( dotests ) then
 
-				while( fbcu_test_index <> INVALID_INDEX )
+					fbcu_test_index = .test_index_head
 
-					with fbcu_tests( fbcu_test_index )
-						if( .suite_index = fbcu_suite_index ) then
+					while( fbcu_test_index <> INVALID_INDEX )
 
-							if( verbose ) then
-								print "    "; .name
+						with fbcu_tests( fbcu_test_index )
+							if( .suite_index = fbcu_suite_index ) then
+
+								if( verbose ) then
+									print "    "; .name
+								end if
+
+								if( .test_proc ) then
+									.test_proc()
+								else
+									failed = true
+								end if
 							end if
 
-							if( .test_proc ) then
-								.test_proc()
-							end if
-						end if
+							fbcu_test_index = .test_index_next
 
-						fbcu_test_index = .test_index_next
+						end with
 
-					end with
+					wend
 
-				wend
+				end if
 
 				if( .term_proc ) then
-					.term_proc()
+					if( .term_proc() = false ) then
+						print "      " & .name & " cleanup procedure failed"
+						failed = true
+					end if
 				end if
 			end with
 
 		next
 
+		function = not failed
+
 		if( show_summary ) then
 			show_results()
 		end if
 
-	end sub
+	end function
 
 	''
 	sub show_results _

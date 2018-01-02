@@ -49,15 +49,15 @@ sub fbcu_add_test_qb alias "fbcu_add_test_qb" _
 end sub
 
 ''
-sub fbcu_run_tests_qb alias "fbcu_run_tests_qb" _
+function fbcu_run_tests_qb alias "fbcu_run_tests_qb" _
 	( _
 		byval show_summary as boolean = true, _
 		byval verbose as boolean = false _
-	)
+	) as boolean
 
-	fbcu.run_tests( show_summary, verbose )
+	function = fbcu.run_tests( show_summary, verbose )
 
-end sub
+end function
 
 ''
 sub fbcu_show_results_qb alias "fbcu_show_results_qb" _
