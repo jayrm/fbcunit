@@ -1,3 +1,6 @@
+''  fbcunit - FreeBASIC Unit Testing Component
+''	Copyright (C) 2017 Jeffery R. Marshall (coder[at]execulink[dot]com)
+
 #include once "crt/stdio.bi"
 #include once "fbcunit_console.bi"
 
