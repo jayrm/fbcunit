@@ -1,7 +1,7 @@
 /'
-	fbcunit example #6 -- ex06.bas
+	fbcunit example #6
 
-		- usage in -lang qb
+		- test usage in -lang qb
 '/
 
 '$lang: "qb"

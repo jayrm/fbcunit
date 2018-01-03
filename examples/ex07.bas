@@ -4,6 +4,8 @@
 		- usage in -lang qb
 		- SUITE_INIT & SUITE_CLEANUP need to set
 		  the return value
+		- !!! currently, fbcunit does not check
+		  return value of init/cleanup procs
 '/
 
 '$lang: "qb"

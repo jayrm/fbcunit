@@ -16,4 +16,4 @@
 
 #include once "fbcunit.bi"
 
-fbcu.run_tests()
+fbcu.run_tests

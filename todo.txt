@@ -1,5 +1,7 @@
 fbcunit TODO/BUG list:
 
+[ ] write a (short) manual on the library's API
+
 [ ] add unit tests (for fbcunit itself) for all CU_* macros
 
 [ ] for compatibility with existing fbc compiler suite,

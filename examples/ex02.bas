@@ -1,5 +1,5 @@
 /'
-	fbcunit example #2 -- ex02.bas
+	fbcunit example
 
 		- direct use of TEST() macro
 		- test is added to default suite automatically

@@ -1,5 +1,5 @@
 /'
-	fbcunit example #4 -- ex04.bas
+	fbcunit example
 
 		- use of SUITE_INIT and SUITE_CLEANUP macros
 		- suite has code that has to run before

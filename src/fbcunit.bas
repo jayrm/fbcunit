@@ -1,5 +1,5 @@
 ''  fbcunit - FreeBASIC Unit Testing Component
-''	Copyright (C) 2017 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''	Copyright (C) 2017-2018 Jeffery R. Marshall (coder[at]execulink[dot]com)
 
 /'---------------------------------------------------------
 | fbcunit - FreeBASIC unit testing module                 |

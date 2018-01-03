@@ -1,6 +1,9 @@
 #include once "fbcunit.bi"
 
 '' tests added to global suite
+'' - when TEST() appears outside of a SUITE() block
+''   it is automatically added to the default global
+''   test suite
 
 TEST( default1 )
 	CU_ASSERT( *fbcu.get_suite_name() = "[global]" )

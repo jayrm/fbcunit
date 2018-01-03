@@ -1,5 +1,7 @@
 #include once "fbcunit.bi"
 
+'' - sanity checks for basic fbcunit asserts
+
 SUITE( fbcunit )
 
 	TEST( sanity_check )

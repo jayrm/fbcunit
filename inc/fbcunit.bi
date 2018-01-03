@@ -2,14 +2,14 @@
 #define __FBCUNIT_BI_INCLUDE__ 1
 
 ''  fbcunit - FreeBASIC Unit Testing Component
-''	Copyright (C) 2017 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''	Copyright (C) 2017-2018 Jeffery R. Marshall (coder[at]execulink[dot]com)
 
 /'---------------------------------------------------------
 | fbcunit - FreeBASIC unit testing module                 |
 ---------------------------------------------------------'/
 
 #define FBCU_VER_MAJOR 0
-#define FBCU_VER_MINOR 3
+#define FBCU_VER_MINOR 4
 
 #inclib "fbcunit"
 

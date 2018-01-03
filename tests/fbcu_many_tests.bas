@@ -1,6 +1,6 @@
 #include once "fbcunit.bi"
 
-'' macro created tests inside a suite
+'' test using a macro to create tests
 
 SUITE( many_tests )
 

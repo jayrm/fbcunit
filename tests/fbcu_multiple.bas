@@ -1,5 +1,7 @@
 #include once "fbcunit.bi"
 
+'' - multiple suites and test in one module
+
 SUITE( multiple1 )
 
 	TEST( first )

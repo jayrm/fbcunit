@@ -1,5 +1,5 @@
 /'
-	fbcunit example #3 -- ex03.bas
+	fbcunit example
 
 		- use of SUITE & TEST macros
 		- tests are added to the list of tests

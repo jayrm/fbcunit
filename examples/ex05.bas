@@ -1,9 +1,11 @@
 /'
-	fbcunit example #5 -- ex05.bas
+	fbcunit example
 
 		- disable the helper macros
 		- add the suite and tests directly using
 		  fbcu interface
+		- !!! currently, fbcunit does not check
+		  return value of init/cleanup procs
 '/
 
 #define FBCU_ENABLE_MACROS 0

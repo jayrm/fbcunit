@@ -1,5 +1,5 @@
 /'
-	fbcunit example #1 -- ex01.bas
+	fbcunit example
 
 		- direct use of CU_ASSERT() macro
 		- failed assertions will be displayed immediately

@@ -1,3 +1,9 @@
+Version 0.04
+
+[added]
+- explicit copyright notices on source files and in the readme.txt
+
+
 Version 0.03
 
 [added]
