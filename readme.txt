@@ -6,17 +6,25 @@ fbcunit version 0.3
 
 Compiling
 ---------
-	To compile fbcunit library, the test-suite (for fbcunit
-	itself), and examples, from top level directory:
+	To compile fbcunit library, from top level directory:
 
 		$ make
+
+	To compile everything: the library, the test-suite (for fbcunit
+	itself), and examples, from top level directory:
+
+		$ make everything
+
+	To list targets and options:
+
+		$ make help
 
 
 Testing
 -------
 	To test the library (with itself), from top level directory:
 
-		$ tests/tests.exe
+		$ make tests && tests/tests.exe
 
 	Also see ./examples directory for examples of usage
 

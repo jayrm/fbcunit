@@ -1,5 +1,3 @@
-#include once "fbcunit.bi"
-
 /'---------------------------------------------------------
 | fbcunit - FreeBASIC unit testing module                 |
 ----------------------------------------------------------/
@@ -16,6 +14,13 @@
 /----------------------------------------------------------
 |                                                         |
 ---------------------------------------------------------'/
+
+#include once "fbcunit.bi"
+#include once "fbcunit_console.bi"
+
+'' chng: written [jeffm]
+
+'' --------------------------------------------------------
 
 '' FBCU_SUITE_COUNT_START is a compile time option that can
 '' set the starting size of the suite and test tables
@@ -75,9 +80,23 @@ dim shared fbcu_test_index as integer = INVALID_INDEX
 
 private sub print_output( byref s as const string = "" )
 
-	open cons for output as #255
-	print #255, s
-	close #255
+	/'
+		1)	the crt call to fprintf is in another module, just 
+			personal preference that we don't include "crt.bi" 
+			and all it's symbols in this module and keep this
+			source mostly basic like
+
+		2)	we use fprintf(stdout,...) function because
+			a)	PRINT gets messed after fbgfx tests
+			b)	OPEN CONS & PRINT #, need a file number.  Can't
+				use FREEFILE or a fixed number, it could conflict
+				with a file number in use in the tests
+
+		3)	the output uses LF=chr(10) only.  On win 7 in a cmd
+			shell, this gets translated to CRLF.
+	'/
+
+	crt_print_output( s & chr(10) )
 
 end sub
 

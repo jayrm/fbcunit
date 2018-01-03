@@ -1,9 +1,8 @@
+'' fbcunit wrapper for #lang qb mode
+
 #include once "fbcunit.bi"
 
-/' 
-	fbcunit wrapper for #lang qb mode
-'/
-
+'' chng: written [jeffm]
 
 ''
 function fbcu_find_suite_qb alias "fbcu_find_suite_qb" _

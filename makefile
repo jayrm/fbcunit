@@ -1,9 +1,13 @@
 FBC := fbc
 
+ECHO := echo
+
 LIBRARY := lib/libfbcunit.a
 SRCS    := src/fbcunit.bas
 SRCS    += src/fbcunit_qb.bas
+SRCS    += src/fbcunit_console.bas
 HDRS    := inc/fbcunit.bi
+HDRS    += src/fbcunit_console.bi
 
 TEST_SRCS := tests/tests.bas
 TEST_SRCS += tests/fbcu_sanity.bas
@@ -32,7 +36,28 @@ FBCFLAGS += -g -exx -i ./inc
 VPATH = .
 
 .PHONY: all
-all: $(LIBRARY) tests examples
+all: library
+
+.PHONY: help
+help:
+	@$(ECHO) "usage: make target [options]"
+	@$(ECHO) ""
+	@$(ECHO) "Targets:"
+	@$(ECHO) "   help           - displays this information"
+	@$(ECHO) "   library        - builds $(LIBRARY)"
+	@$(ECHO) "   tests          - builds tests for fbcunit"
+	@$(ECHO) "   examples       - builds all the examples"
+	@$(ECHO) "   everything     - builds library, tests, examples"
+	@$(ECHO) "   clean          - cleans up all built files"
+	@$(ECHO) ""
+	@$(ECHO) "Options:"
+	@$(ECHO) "   FBC=/path/fbc  - set path to FBC compiler"
+
+.PHONY: everything
+everything: library tests examples
+
+.PHONY: library
+library: $(LIBRARY)
 
 .PHONY: tests
 tests: $(TEST_EXE) 
