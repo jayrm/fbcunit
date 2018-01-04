@@ -2,7 +2,7 @@ Version 0.04
 
 [added]
 - explicit copyright notices on source files and in the readme.txt
-
+- junit compatible xml report generator
 
 Version 0.03
 

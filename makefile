@@ -6,8 +6,11 @@ LIBRARY := lib/libfbcunit.a
 SRCS    := src/fbcunit.bas
 SRCS    += src/fbcunit_qb.bas
 SRCS    += src/fbcunit_console.bas
+SRCS    += src/fbcunit_report.bas
 HDRS    := inc/fbcunit.bi
+HDRS    := src/fbcunit_types.bi
 HDRS    += src/fbcunit_console.bi
+HDRS    += src/fbcunit_report.bi
 
 TEST_SRCS := tests/tests.bas
 TEST_SRCS += tests/fbcu_sanity.bas
@@ -28,6 +31,8 @@ EXAMPLES += examples/ex04.exe
 EXAMPLES += examples/ex05.exe
 EXAMPLES += examples/ex06.exe
 EXAMPLES += examples/ex07.exe
+EXAMPLES += examples/ex08.exe
+EXAMPLES += examples/ex09.exe
 
 FBCFLAGS += -g -exx -i ./inc
 

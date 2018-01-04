@@ -434,6 +434,11 @@
 	declare function fbcu.check_internal_state alias "fbcu_check_internal_state_qb" _
 		( _
 		) as __boolean
+
+	declare function fbcu.write_report_xml alias "fbcu_write_report_xml_qb" _
+		( _
+			byval filename as const __zstring __ptr _
+		) as __boolean
 	
 	declare function fbcu.run_tests alias "fbcu_run_tests_qb" _
 		( _
@@ -499,6 +504,11 @@ namespace fbcu
 
 	declare function check_internal_state _
 		( _
+		) as boolean
+
+	declare function write_report_xml _
+		( _
+			byval filename as const zstring ptr _
 		) as boolean
 
 	declare function run_tests _

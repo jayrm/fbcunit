@@ -20,6 +20,7 @@
 
 #include once "fbcunit.bi"
 #include once "fbcunit_console.bi"
+#include once "fbcunit_report.bi"
 
 '' chng: written [jeffm]
 
@@ -39,37 +40,19 @@
 '' module level stuff
 '' ------------------
 
-type FBCU_SUITE
-	name as string
-	name_nocase as string
-	init_proc as function cdecl ( ) as long
-	term_proc as function cdecl ( ) as long
-	test_count as integer
-	assert_count as integer
-	pass_count as integer
-	fail_count as integer
-	test_index_head as integer
-	test_index_tail as integer
-end type
-
-type FBCU_TEST
-	name as string
-	name_nocase as string
-	test_proc as sub cdecl ( )
-	suite_index as integer
-	assert_count as integer
-	pass_count as integer
-	fail_count as integer
-	test_index_next as integer
-end type
+#include once "fbcunit_types.bi"
 
 redim shared fbcu_suites(1 to FBCU_SUITE_COUNT_START) as FBCU_SUITE
 dim shared fbcu_suites_max as integer = FBCU_SUITE_COUNT_START
 dim shared fbcu_suites_count as integer = 0
 
-redim shared fbcu_tests(1 to FBCU_SUITE_COUNT_START) as FBCU_TEST
-dim shared fbcu_tests_max as integer = FBCU_SUITE_COUNT_START
+redim shared fbcu_tests(1 to FBCU_SUITE_COUNT_START*2) as FBCU_TEST
+dim shared fbcu_tests_max as integer = FBCU_SUITE_COUNT_START*2
 dim shared fbcu_tests_count as integer = 0
+
+redim shared fbcu_cases(1 to FBCU_SUITE_COUNT_START*4) as FBCU_CASE
+dim shared fbcu_cases_max as integer = FBCU_SUITE_COUNT_START*4
+dim shared fbcu_cases_count as integer = 0
 
 #define INVALID_INDEX 0
 
@@ -238,11 +221,14 @@ namespace fbcu
 			.init_proc = init_proc
 			.term_proc = term_proc
 			.test_count = 0
-			.assert_count = 0
-			.pass_count = 0
-			.fail_count = 0
 			.test_index_head = INVALID_INDEX
 			.test_index_tail = INVALID_INDEX
+
+			'' stats
+			.test_fail_count = 0
+			.assert_count = 0
+			.assert_pass_count = 0
+			.assert_fail_count = 0
 
 		end with
 
@@ -298,10 +284,14 @@ namespace fbcu
 
 			.test_proc = test_proc
 			.suite_index = fbcu_suite_index
-			.assert_count = 0
-			.pass_count = 0
-			.fail_count = 0
 			.test_index_next = INVALID_INDEX
+			.case_index_head = INVALID_INDEX
+			.case_index_tail = INVALID_INDEX
+
+			'' stats
+			.assert_count = 0
+			.assert_pass_count = 0
+			.assert_fail_count = 0
 
 		end with
 
@@ -314,6 +304,72 @@ namespace fbcu
 
 		if( is_global ) then
 			fbcu_suite_default_index = fbcu_suite_index
+		end if
+
+	end sub
+
+	''
+	sub add_case _
+		( _
+			byval value as boolean, _
+			byval fil as zstring ptr, _
+			byval lin as long, _
+			byval fun as zstring ptr, _
+			byval msg as zstring ptr _
+		)
+
+		if( fbcu_suite_index = INVALID_INDEX ) then	
+			add_suite( )
+		end if
+
+		if( fbcu_test_index = INVALID_INDEX ) then	
+			add_test( )
+		end if
+
+		'' increment assertions for current suite
+		fbcu_suites( fbcu_suite_index ).assert_count += 1
+
+		'' increment assertions for current test
+		fbcu_tests( fbcu_test_index ).assert_count += 1
+
+		'' pass
+		if( value ) then
+			'' increment pass for current suite
+			fbcu_suites( fbcu_suite_index ).assert_pass_count += 1
+			fbcu_tests( fbcu_test_index ).assert_pass_count += 1
+
+		'' fail
+		else
+			'' increment fail for current suite
+			fbcu_suites( fbcu_suite_index ).assert_fail_count += 1
+
+			if( fbcu_tests( fbcu_test_index ).assert_fail_count = 0 ) then
+				fbcu_suites( fbcu_suite_index ).test_fail_count += 1
+			end if
+
+			fbcu_tests( fbcu_test_index ).assert_fail_count += 1
+
+			if( fbcu_cases_count >= fbcu_cases_max ) then
+				fbcu_cases_max = fbcu_cases_max * 2
+				redim preserve fbcu_cases( 1 to fbcu_cases_max )
+			end if
+
+			fbcu_cases_count += 1
+
+			with fbcu_cases( fbcu_cases_count)
+				.text = *msg
+				.file = *fil
+				.line = lin
+				.case_index_next = 0
+			end with
+
+			if( fbcu_tests( fbcu_test_index ).case_index_head = INVALID_INDEX ) then
+				fbcu_tests( fbcu_test_index ).case_index_head = fbcu_cases_count
+			else
+				fbcu_cases( fbcu_tests( fbcu_test_index ).case_index_tail ).case_index_next = fbcu_cases_count
+			end if
+			fbcu_tests( fbcu_test_index ).case_index_tail = fbcu_cases_count
+
 		end if
 
 	end sub
@@ -403,6 +459,42 @@ namespace fbcu
 	end function
 
 	''
+	function write_report_xml _
+		( _ 
+			byval filename as const zstring ptr _
+		) as boolean
+
+		if( filename = FBCU_NULL ) then
+			return false
+		end if
+
+		if( fbcu.report_init_file( *filename ) = false ) then
+			return false
+		end if
+
+		for suite_index as integer = 1 to fbcu_suites_count
+			report_init_suite( fbcu_suites( suite_index ) )
+			dim test_index as integer = fbcu_suites( suite_index ).test_index_head
+			while( test_index <> INVALID_INDEX )
+				report_init_test( fbcu_suites( suite_index ), fbcu_tests( test_index ) )
+				dim case_index as integer = fbcu_tests( test_index ).case_index_head
+				while( case_index <> INVALID_INDEX )
+					report_emit_case( fbcu_cases( case_index ) )
+					case_index = fbcu_cases( case_index ).case_index_next
+				wend
+				report_exit_test( fbcu_tests( test_index ) )
+				test_index = fbcu_tests( test_index ).test_index_next
+			wend
+			fbcu.report_exit_suite( fbcu_suites( suite_index ) )
+		next
+
+		fbcu.report_exit_file()
+
+		return true
+
+	end function
+
+	''
 	function run_tests _
 		( _
 			byval show_summary as boolean = true, _
@@ -431,9 +523,11 @@ namespace fbcu
 					print_output( "  " & .name )
 				end if
 
+				'' reset stats
+				.test_fail_count = 0
 				.assert_count = 0
-				.pass_count = 0
-				.fail_count = 0
+				.assert_pass_count = 0
+				.assert_fail_count = 0
 
 				if( .init_proc ) then
 					if( .init_proc() ) then
@@ -459,6 +553,12 @@ namespace fbcu
 					while( fbcu_test_index <> INVALID_INDEX )
 
 						with fbcu_tests( fbcu_test_index )
+
+							'' reset stats							
+							.assert_count = 0
+							.assert_pass_count = 0
+							.assert_fail_count = 0
+
 							if( .suite_index = fbcu_suite_index ) then
 
 								if( verbose ) then
@@ -490,6 +590,7 @@ namespace fbcu
 #endif
 					end if
 				end if
+
 			end with
 
 		next
@@ -508,9 +609,11 @@ namespace fbcu
 		)
 
 		dim t_assert_count as integer = 0
-		dim t_pass_count as integer = 0
-		dim t_fail_count as integer = 0
+		dim t_assert_pass_count as integer = 0
+		dim t_assert_fail_count as integer = 0
 		dim t_test_count as integer = 0
+		dim t_test_fail_count as integer = 0
+
 		dim x as string = ""
 
 		print_output( )
@@ -525,15 +628,16 @@ namespace fbcu
 
 				t_test_count += .test_count
 				t_assert_count += .assert_count
-				t_pass_count += .pass_count
-				t_fail_count += .fail_count
+				t_assert_pass_count += .assert_pass_count
+				t_assert_fail_count += .assert_fail_count
+				t_test_fail_count += .test_fail_count
 
 				x = ""
 				x &= rjust( "" & .assert_count, 8 )
 				x &= "  "
-				x &= rjust( "" & .pass_count, 8 )
+				x &= rjust( "" & .assert_pass_count, 8 )
 				x &= "  "
-				x &= rjust( "" & .fail_count, 8 )
+				x &= rjust( "" & .assert_fail_count, 8 )
 				x &= "  "
 				x &= ljust( "" & .name, 38 )
 				x &= "  "
@@ -550,9 +654,9 @@ namespace fbcu
 		x = ""
 		x &= rjust( "" & t_assert_count, 8 )
 		x &= "  "
-		x &= rjust( "" & t_pass_count, 8 )
+		x &= rjust( "" & t_assert_pass_count, 8 )
 		x &= "  "
-		x &= rjust( "" & t_fail_count, 8 )
+		x &= rjust( "" & t_assert_fail_count, 8 )
 		x &= "  "
 		x &= ljust( "Total", 38 )
 		x &= "  "
@@ -573,34 +677,11 @@ namespace fbcu
 			byval msg as zstring ptr _
 		)
 
-		if( fbcu_suite_index = INVALID_INDEX ) then	
-			add_suite( )
-		end if
-
-		if( fbcu_test_index = INVALID_INDEX ) then	
-			add_test( )
-		end if
-
-		'' increment assertions for current suite
-		fbcu_suites( fbcu_suite_index ).assert_count += 1
-
-		'' increment assertions for current test
-		fbcu_tests( fbcu_test_index ).assert_count += 1
-
-		'' pass
-		if( value ) then
-			'' increment pass for current suite
-			fbcu_suites( fbcu_suite_index ).pass_count += 1
-			fbcu_tests( fbcu_test_index ).pass_count += 1
-
-		'' fail
-		else
-			'' increment fail for current suite
-			fbcu_suites( fbcu_suite_index ).fail_count += 1
-			fbcu_tests( fbcu_test_index ).fail_count += 1
+		if( value = false ) then
 			print_output( "      " & *fil & "(" & lin & ") : error : " & *fun & " " & *msg )
-
 		end if
+
+		add_case( value, fil, lin, fun, msg )
 
 	end sub
 
