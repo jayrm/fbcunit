@@ -34,7 +34,17 @@ EXAMPLES += examples/ex07.exe
 EXAMPLES += examples/ex08.exe
 EXAMPLES += examples/ex09.exe
 
-FBCFLAGS += -g -exx -i ./inc
+ifneq ($(ARCH),)
+	FBCFLAGS += -arch $(ARCH)
+endif
+ifneq ($(TARGET),)
+	FBCFLAGS += -target $(TARGET)
+endif
+ifneq ($(FPU),)
+	FBCFLAGS += -fpu $(FPU)
+endif
+
+FBCFLAGS += -mt -g -exx -i ./inc
 
 .SUFFIXES: .bas
 
@@ -57,6 +67,9 @@ help:
 	@$(ECHO) ""
 	@$(ECHO) "Options:"
 	@$(ECHO) "   FBC=/path/fbc  - set path to FBC compiler"
+	@$(ECHO) "   TARGET=target"
+	@$(ECHO) "   ARCH=arch (default is 486)"
+	@$(ECHO) "   FPU=fpu | sse"
 
 .PHONY: everything
 everything: library tests examples
