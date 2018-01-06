@@ -1,10 +1,15 @@
-Version 0.04
+Version 0.5
+
+[changed]
+- License is GNU Lesser General Public License Version 2.1 (or later) plus linking exception -- see license.txt
+
+Version 0.4
 
 [added]
 - explicit copyright notices on source files and in the readme.txt
 - junit compatible xml report generator
 
-Version 0.03
+Version 0.3
 
 [added]
 - CU_ASSERT_DOUBLE_EQUAL() macro added - it is needed for fbc compiler test suite
@@ -24,7 +29,7 @@ Version 0.03
 - CU_ASSERT_TRUE() was comparing "=true" and needs to compare "<>false"
 
 
-Version 0.02
+Version 0.2
 
 [added]
 - dual api for using fbcunit in -lang qb
@@ -42,7 +47,7 @@ Version 0.02
 - lang qb: fix pseudo namespace "tests"
 
 
-Version 0.01
+Version 0.1
 
 [added]
 - add defines FBCU_VER_MAJOR, FBCU_VER_MINOR
@@ -52,7 +57,7 @@ Version 0.01
 - simplify makefiles - one remaining in top level
 
 
-Version 0.00
+Version 0.0
 
 [added]
 - base code (from another project) and set namespace to fbcunit

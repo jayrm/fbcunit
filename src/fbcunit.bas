@@ -1,8 +1,12 @@
-''  fbcunit - FreeBASIC Unit Testing Component
+''  fbcunit - FreeBASIC Compiler Unit Testing Component
 ''	Copyright (C) 2017-2018 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''
+''  License: GNU Lesser General Public License 
+''           version 2.1 (or any later version) plus
+''           linking exception, see license.txt
 
 /'---------------------------------------------------------
-| fbcunit - FreeBASIC unit testing module                 |
+| fbcunit - FreeBASIC Compiler Unit testing module        |
 ----------------------------------------------------------/
 
      XXX                                   
