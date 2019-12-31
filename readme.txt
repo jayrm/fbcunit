@@ -1,5 +1,5 @@
 	fbcunit - FreeBASIC Compiler Unit Testing Component
-	Copyright (C) 2017-2019 Jeffery R. Marshall (coder[at]execulink[dot]com)
+	Copyright (C) 2017-2020 Jeffery R. Marshall (coder[at]execulink[dot]com)
 
 fbcunit version 0.9
 -------------------
