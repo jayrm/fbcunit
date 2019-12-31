@@ -56,6 +56,54 @@ sub fbcu_add_test_qb alias "fbcu_add_test_qb" _
 end sub
 
 ''
+function fbcu_check_internal_state alias "fbcu_check_internal_state_qb" _
+	( _
+	) as boolean
+
+	function = fbcu.check_internal_state()
+
+end function
+
+''
+function fbcu_write_report_xml alias "fbcu_write_report_xml_qb" _
+	( _
+		byval filename as const zstring ptr _
+	) as boolean
+
+	function = fbcu.write_report_xml( filename )
+
+end function
+
+''
+sub fbcu_setBriefSummary alias "fbcu_setBriefSummary_qb" _
+	( _
+		byval briefSummary as boolean _
+	)
+
+	fbcu.setBriefSummary( briefSummary )
+
+end sub
+
+''
+sub fbcu_setHideCases alias "fbcu_setHideCases_qb" _
+	( _
+		byval hideCases as boolean _
+	)
+
+	fbcu.setHideCases( hideCases )
+
+end sub
+
+''
+function fbcu_getHideCases alias "fbcu_getHideCases_qb" _
+	( _
+	) as boolean
+
+	function = fbcu.getHideCases()
+
+end function
+
+''
 function fbcu_run_tests_qb alias "fbcu_run_tests_qb" _
 	( _
 		byval show_summary as boolean = true, _
