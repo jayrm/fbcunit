@@ -77,7 +77,7 @@ if( opt_help ) then
 	print "   --xml filename       write test results to xml format for filename"
 	print "   --no-summary         don't show the summary (default is to show it)"
 	print "   --no-error           don't exit with error code even if tests failed"
-	print "   --short-summary      only show failures in the summary"
+	print "   --brief-summary      only show failures in the summary"
 	print "   --hide-cases         don't show the failed cases"
 	print
 
