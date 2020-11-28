@@ -1,3 +1,11 @@
+Version 1.0
+
+[added]
+- fbcu.setShowConsole( true|false ) method to show console logging (true), or not (false, default)
+- fbcu.getShowConsole() as boolean to return current setting for "showConsole" option
+- fbcu.outputConsoleString( byref s as const string = "" ) output to console depending on showConsole setting
+
+
 Version 0.9
 
 [added]
