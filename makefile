@@ -2,7 +2,20 @@ FBC := fbc
 
 ECHO := echo
 
-LIBRARY := lib/libfbcunit.a
+LIBDIR := lib
+
+ifneq ($(ARCH),)
+	FBCFLAGS += -arch $(ARCH)
+endif
+ifneq ($(TARGET),)
+	FBCFLAGS += -target $(TARGET)
+	LIBDIR := lib/$(TARGET)
+endif
+ifneq ($(FPU),)
+	FBCFLAGS += -fpu $(FPU)
+endif
+
+LIBNAME := libfbcunit.a
 SRCS    := src/fbcunit.bas
 SRCS    += src/fbcunit_qb.bas
 SRCS    += src/fbcunit_console.bas
@@ -43,16 +56,6 @@ EXAMPLES += examples/ex09.exe
 EXAMPLES += examples/ex10.exe
 EXAMPLES += examples/ex11.exe
 
-ifneq ($(ARCH),)
-	FBCFLAGS += -arch $(ARCH)
-endif
-ifneq ($(TARGET),)
-	FBCFLAGS += -target $(TARGET)
-endif
-ifneq ($(FPU),)
-	FBCFLAGS += -fpu $(FPU)
-endif
-
 FBCFLAGS += -mt -g -exx -i ./inc
 
 .SUFFIXES: .bas
@@ -61,6 +64,9 @@ VPATH = .
 
 .PHONY: all
 all: library
+
+$(LIBDIR):
+	mkdir -p $@
 
 .PHONY: help
 help:
@@ -79,12 +85,15 @@ help:
 	@$(ECHO) "   TARGET=target"
 	@$(ECHO) "   ARCH=arch (default is 486)"
 	@$(ECHO) "   FPU=fpu | sse"
+	@$(ECHO) "Defaults:"
+	@$(ECHO) "   FBC=fbc"
+	@$(ECHO) "   LIBDIR=/path/<target>"
 
 .PHONY: everything
 everything: library tests examples
 
 .PHONY: library
-library: $(LIBRARY)
+library: $(LIBDIR)/$(LIBNAME)
 
 .PHONY: tests
 tests: $(TEST_EXE) 
@@ -92,20 +101,20 @@ tests: $(TEST_EXE)
 .PHONY: examples
 examples: $(EXAMPLES)
 
-$(LIBRARY): $(SRCS) $(HDRS)
+$(LIBDIR)/$(LIBNAME): $(SRCS) $(HDRS) | $(LIBDIR)
 	$(FBC) $(FBCFLAGS) -lib $(SRCS) -x $@
 
 tests/%.o: tests/%.bas $(HDRS)
 	$(FBC) $(FBCFLAGS) -m tests -c $< -o $@
 
-examples/%.exe: examples/%.bas $(HDRS) $(LIBRARY)
-	$(FBC) $(FBCFLAGS) $< -p ./lib -x $@
+examples/%.exe: examples/%.bas $(HDRS) $(LIBDIR)/$(LIBNAME)
+	$(FBC) $(FBCFLAGS) $< -p $(LIBDIR) -x $@
 
-$(TEST_EXE): $(TEST_OBJS) $(LIBRARY)
-	$(FBC) $(FBCFLAGS) $(TEST_OBJS) -p ./lib -x $@
+$(TEST_EXE): $(TEST_OBJS) $(LIBDIR)/$(LIBNAME)
+	$(FBC) $(FBCFLAGS) $(TEST_OBJS) -p $(LIBDIR) -x $@
 
 .PHONY: clean
 clean:
-	-rm -f $(LIBRARY)
+	-rm -f $(LIBDIR)/$(LIBNAME)
 	-rm -f $(TEST_OBJS) $(TEST_EXE)
 	-rm -f $(EXAMPLES)
