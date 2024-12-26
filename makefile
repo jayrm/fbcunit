@@ -1,18 +1,45 @@
+# fbcunit library
+#
+# goals:
+#   library [default]   - make just the library
+#   tests               - make tests for the library itself
+#   examples            - make the examples
+#   everything          - make all of the above
+#   clean               - remove output and temporary files
+#   help                - show help and options
+#
+# variables:
+#   FBC       location/name of the fbc compiler
+#   ARCH      '-arch ARCH' option to pass to fbc compiler
+#   TARGET    '-target TARGET' option to pass to fbc compiler
+#             and sets the object file and library file
+#             output directories
+#   LIBDIR    output library directory and default location for
+#             the libary if TARGET was not explicitly set
+#   MKDIR     name of the make directory command
+#   RM        name of the remove command
+#   ECHO      name of the echo to terminal command
+#   
+
 FBC := fbc
 
+MKDIR := mkdir -p
+RM := rm -f
 ECHO := echo
 
 LIBDIR := lib
 
 ifneq ($(ARCH),)
-	FBCFLAGS += -arch $(ARCH)
+  FBCFLAGS += -arch $(ARCH)
 endif
 ifneq ($(TARGET),)
-	FBCFLAGS += -target $(TARGET)
-	LIBDIR := lib/$(TARGET)
+  FBCFLAGS += -target $(TARGET)
+  LIBTARGETDIR := $(LIBDIR)/$(TARGET)
+else
+  LIBTARGETDIR := $(LIBDIR)
 endif
 ifneq ($(FPU),)
-	FBCFLAGS += -fpu $(FPU)
+  FBCFLAGS += -fpu $(FPU)
 endif
 
 LIBNAME := libfbcunit.a
@@ -65,8 +92,8 @@ VPATH = .
 .PHONY: all
 all: library
 
-$(LIBDIR):
-	mkdir -p $@
+$(sort $(LIBTARGETDIR) $(LIBDIR)) :
+	$(MKDIR) $@
 
 .PHONY: help
 help:
@@ -87,13 +114,14 @@ help:
 	@$(ECHO) "   FPU=fpu | sse"
 	@$(ECHO) "Defaults:"
 	@$(ECHO) "   FBC=fbc"
-	@$(ECHO) "   LIBDIR=/path/<target>"
+	@$(ECHO) "   LIBDIR=lib
+	@$(ECHO) "   LIBTARGETDIR=<libdir>/<target>"
 
 .PHONY: everything
 everything: library tests examples
 
 .PHONY: library
-library: $(LIBDIR)/$(LIBNAME)
+library: $(LIBTARGETDIR)/$(LIBNAME)
 
 .PHONY: tests
 tests: $(TEST_EXE) 
@@ -101,20 +129,20 @@ tests: $(TEST_EXE)
 .PHONY: examples
 examples: $(EXAMPLES)
 
-$(LIBDIR)/$(LIBNAME): $(SRCS) $(HDRS) | $(LIBDIR)
+$(LIBTARGETDIR)/$(LIBNAME): $(SRCS) $(HDRS) | $(LIBTARGETDIR)
 	$(FBC) $(FBCFLAGS) -lib $(SRCS) -x $@
 
 tests/%.o: tests/%.bas $(HDRS)
 	$(FBC) $(FBCFLAGS) -m tests -c $< -o $@
 
-examples/%.exe: examples/%.bas $(HDRS) $(LIBDIR)/$(LIBNAME)
-	$(FBC) $(FBCFLAGS) $< -p $(LIBDIR) -x $@
+examples/%.exe: examples/%.bas $(HDRS) $(LIBTARGETDIR)/$(LIBNAME)
+	$(FBC) $(FBCFLAGS) $< -p $(LIBTARGETDIR) -x $@
 
-$(TEST_EXE): $(TEST_OBJS) $(LIBDIR)/$(LIBNAME)
-	$(FBC) $(FBCFLAGS) $(TEST_OBJS) -p $(LIBDIR) -x $@
+$(TEST_EXE): $(TEST_OBJS) $(LIBTARGETDIR)/$(LIBNAME)
+	$(FBC) $(FBCFLAGS) $(TEST_OBJS) -p $(LIBTARGETDIR) -x $@
 
 .PHONY: clean
 clean:
-	-rm -f $(LIBDIR)/$(LIBNAME)
-	-rm -f $(TEST_OBJS) $(TEST_EXE)
-	-rm -f $(EXAMPLES)
+	-$(RM) $(LIBTARGETDIR)/$(LIBNAME)
+	-$(RM) $(TEST_OBJS) $(TEST_EXE)
+	-$(RM) $(EXAMPLES)
