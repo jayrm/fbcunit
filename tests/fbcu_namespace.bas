@@ -46,7 +46,7 @@ SUITE( fbcunit.grouped )
 		do_check()
 	END_TEST
 
-	TEST_GROUP( group_a	)
+	TEST_GROUP( group_a )
 		TEST( proc )
 			called += 1
 			flag_a = true

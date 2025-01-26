@@ -14,11 +14,11 @@
 
 namespace ex05
 
-	function init cdecl () as long 
+	function init cdecl () as long
 		function = true
 	end function
 
-	function cleanup cdecl () as long 
+	function cleanup cdecl () as long
 		function = true
 	end function
 

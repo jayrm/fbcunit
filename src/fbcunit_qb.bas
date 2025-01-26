@@ -1,7 +1,7 @@
 ''  fbcunit - FreeBASIC Compiler Unit Testing Component
-''	Copyright (C) 2017-2020 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''  Copyright (C) 2017-2025 Jeffery R. Marshall (coder[at]execulink[dot]com)
 ''
-''  License: GNU Lesser General Public License 
+''  License: GNU Lesser General Public License
 ''           version 2.1 (or any later version) plus
 ''           linking exception, see license.txt
 
@@ -50,7 +50,7 @@ sub fbcu_add_test_qb alias "fbcu_add_test_qb" _
 		byval test_proc as sub cdecl ( ) = FBCU_NULL, _
 		byval is_global as boolean = false _
 	)
-	
+
 	fbcu.add_test( suite_name, test_name, test_proc, is_global )
 
 end sub

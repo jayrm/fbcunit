@@ -1,23 +1,23 @@
 ''  fbcunit - FreeBASIC Compiler Unit Testing Component
-''	Copyright (C) 2017-2020 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''  Copyright (C) 2017-2025 Jeffery R. Marshall (coder[at]execulink[dot]com)
 ''
-''  License: GNU Lesser General Public License 
+''  License: GNU Lesser General Public License
 ''           version 2.1 (or any later version) plus
 ''           linking exception, see license.txt
 
 /'---------------------------------------------------------
 | fbcunit - FreeBASIC Compiler Unit testing module        |
 ----------------------------------------------------------/
-
-     XXX                                   
-    XX    XX                               XX    XX
-    XX    XX                                     XX
-  XXXXXX  XXXXX    XXXX   XX  XX  XXXXX   XXX   XXXX
-    XX    XX  XX  XX  XX  XX  XX  XX XXX   XX    XX
-    XX    XX  XX  XX      XX  XX  XX  XX   XX    XX
-    XX    XX  XX  XX  XX  XX  XX  XX  XX   XX    XX
-    XX    XXXXX    XXXX    XXXX   XX  XX  XXXX   XXX
-
+''
+''     XXX
+''     XX    XX                               XX    XX
+''     XX    XX                                     XX
+''   XXXXXX  XXXXX    XXXX   XX  XX  XXXXX   XXX   XXXX
+''     XX    XX  XX  XX  XX  XX  XX  XX XXX   XX    XX
+''     XX    XX  XX  XX      XX  XX  XX  XX   XX    XX
+''     XX    XX  XX  XX  XX  XX  XX  XX  XX   XX    XX
+''     XX    XXXXX    XXXX    XXXX   XX  XX  XXXX   XXX
+''
 /----------------------------------------------------------
 |                                                         |
 ---------------------------------------------------------'/
@@ -75,18 +75,18 @@ dim shared fbcu_brief_summary as boolean = false
 private sub print_output( byref s as const string = "" )
 
 	/'
-		1)	the crt call to fprintf is in another module, just 
-			personal preference that we don't include "crt.bi" 
+		1)  the crt call to fprintf is in another module, just
+			personal preference that we don't include "crt.bi"
 			and all it's symbols in this module and keep this
 			source mostly basic like
 
-		2)	we use fprintf(stdout,...) function because
-			a)	PRINT gets messed after fbgfx tests
-			b)	OPEN CONS & PRINT #, need a file number.  Can't
+		2)  we use fprintf(stdout,...) function because
+			a)  PRINT gets messed after fbgfx tests
+			b)  OPEN CONS & PRINT #, need a file number.  Can't
 				use FREEFILE or a fixed number, it could conflict
 				with a file number in use in the tests
 
-		3)	the output uses LF=chr(10) only.  On win 7 in a cmd
+		3)  the output uses LF=chr(10) only.  On win 7 in a cmd
 			shell, this gets translated to CRLF.
 	'/
 
@@ -131,7 +131,7 @@ private sub hash_grow()
 	next
 	for index as integer = 1 to fbcu_suites_count
 		hash_add( strptr(fbcu_suites(index).name_nocase), index )
-	next 
+	next
 end sub
 
 '' returns index in to hash()
@@ -207,7 +207,7 @@ namespace fbcu
 			byval init_proc as function cdecl ( ) as long = FBCU_NULL, _
 			byval term_proc as function cdecl ( ) as long = FBCU_NULL _
 		)
-		
+
 		fbcu_suite_index = find_suite( suite_name )
 
 		if( fbcu_suite_index <> INVALID_INDEX ) then
@@ -283,11 +283,11 @@ namespace fbcu
 			byval test_proc as sub cdecl ( ), _
 			byval is_global as boolean = false _
 		)
-		
+
 		if( is_global ) then
 			fbcu_suite_index = fbcu_suite_default_index
 		end if
-		
+
 		fbcu_suite_index = find_suite( suite_name )
 
 		if( fbcu_suite_index = INVALID_INDEX ) then
@@ -301,7 +301,7 @@ namespace fbcu
 			fbcu_tests_max = fbcu_tests_max * 2
 			redim preserve fbcu_tests( 1 to fbcu_tests_max ) as FBCU_TEST
 		end if
-			
+
 		fbcu_tests_count += 1
 		fbcu_test_index = fbcu_tests_count
 
@@ -352,11 +352,11 @@ namespace fbcu
 			byval msg as zstring ptr _
 		)
 
-		if( fbcu_suite_index = INVALID_INDEX ) then	
+		if( fbcu_suite_index = INVALID_INDEX ) then
 			add_suite( )
 		end if
 
-		if( fbcu_test_index = INVALID_INDEX ) then	
+		if( fbcu_test_index = INVALID_INDEX ) then
 			add_test( )
 		end if
 
@@ -497,7 +497,7 @@ namespace fbcu
 
 	''
 	function write_report_xml _
-		( _ 
+		( _
 			byval filename as const zstring ptr _
 		) as boolean
 
@@ -634,7 +634,7 @@ namespace fbcu
 
 						with fbcu_tests( fbcu_test_index )
 
-							'' reset stats							
+							'' reset stats
 							.assert_count = 0
 							.assert_pass_count = 0
 							.assert_fail_count = 0
@@ -739,7 +739,7 @@ namespace fbcu
 
 			end with
 
-		next 
+		next
 
 		print_output( "--------  --------  --------  --------------------------------------  --------" )
 
@@ -801,7 +801,7 @@ namespace fbcu
 		ia -= 1
 
 		return a - *cast( single ptr, @ia )
-		
+
 	end function
 
 	''
@@ -832,9 +832,9 @@ namespace fbcu
 
 			'' assume big diff
 			return &h7fffffff
-		
+
 		end if
-			
+
 		'' signs are the same, return |ia-ib|
 		ia and= &h7fffffff
 		ib and= &h7fffffff
@@ -916,7 +916,7 @@ namespace fbcu
 		if( dblIsNan(b) ) then
 			return &h7fffffffffffffffll
 		end if
-		
+
 		'' signs different?
 		if( (ia and &h8000000000000000ll) <> (ib and &h8000000000000000ll) ) then
 
@@ -927,9 +927,9 @@ namespace fbcu
 
 			'' assume big diff
 			return &h7fffffffffffffffll
-		
+
 		end if
-			
+
 		'' signs are the same, return |ia-ib|
 		ia and= &h7fffffffffffffffll
 		ib and= &h7fffffffffffffffll

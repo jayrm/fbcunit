@@ -51,7 +51,7 @@ SUITE( qb )
 	END_TEST
 
 	TEST( qb_double )
-		
+
 		dim n as double
 		dim x as double
 		dim b as double
@@ -78,7 +78,7 @@ SUITE( qb )
 		CU_ASSERT( fbcu.dblIsInf( n ) = false )
 		CU_ASSERT( fbcu.dblULPdiff( n, c ) = u )
 		CU_ASSERT_DOUBLE_APPROX( n, c, u )
-		
+
 	END_TEST
 
 END_SUITE

@@ -5,7 +5,7 @@
 SUITE( fbcunit )
 
 	TEST( sanity_check )
-	
+
 		'' check some basic functions of the FBCU component
 
 		CU_ASSERT_TRUE( fbcu.check_internal_state() )

@@ -1,7 +1,7 @@
 ''  fbcunit - FreeBASIC Compiler Unit Testing Component
-''	Copyright (C) 2017-2020 Jeffery R. Marshall (coder[at]execulink[dot]com)
+''  Copyright (C) 2017-2025 Jeffery R. Marshall (coder[at]execulink[dot]com)
 ''
-''  License: GNU Lesser General Public License 
+''  License: GNU Lesser General Public License
 ''           version 2.1 (or any later version) plus
 ''           linking exception, see license.txt
 
@@ -194,20 +194,20 @@ namespace fbcu
 	''
 	sub report_init_test _
 		( _
-			byref suite_rec as const FBCU_SUITE, _ 
+			byref suite_rec as const FBCU_SUITE, _
 			byref test_rec as const FBCU_TEST _
 		)
-		
+
 		dim x as string
 
 		with test_rec
-				
+
 			x = "classname=""" & convert_name( suite_rec.name ) & """"
 			x &= " name=""" & convert_name ( .name ) & """"
 
 			if( .assert_fail_count = 0 ) then
 				report_write( "<testcase " & x & !" />\n" )
-			else	
+			else
 				report_write( "<testcase " & x & !">\n" )
 				report_indent()
 			end if
@@ -242,7 +242,7 @@ namespace fbcu
 		with test_rec
 			if( .assert_fail_count = 0 ) then
 				'' do nothing
-			else	
+			else
 				report_outdent()
 				report_write( !"</testcase>\n" )
 			end if
@@ -255,7 +255,7 @@ namespace fbcu
 		( _
 			byref suite_rec as const FBCU_SUITE _
 		)
-		
+
 		with suite_rec
 			if( .test_count = 0 ) then
 				'' do nothing
